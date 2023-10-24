@@ -14,9 +14,9 @@ functions {
 data{
 	int L; /* # of loci */
 	int N; /* # of organisms */
-	real<lower=0, upper=2> G[N, L]; /* matrix of G */
+	int<lower=0, upper=2> G[N, L]; /* 2D array of G */
 	vector<lower=0, upper=1>[L] P0; /* parent 0 allele frequencies */
-	vector<lower=0, upper=1>[L] P1; /* parent 0 allele frequencies */
+	vector<lower=0, upper=1>[L] P1; /* parent 1 allele frequencies */
 }
 
 parameters{
@@ -32,7 +32,7 @@ model{
 		}
 	}
 	for(j in 1:N){
-		/* increment prior on v and u */
+		/* increment prior on hybrid index */
 		target += beta_lpdf(H[j] | 0.5, 0.5);
 
 	}

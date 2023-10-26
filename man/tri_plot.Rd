@@ -4,7 +4,7 @@
 \alias{tri_plot}
 \title{Plots interpopulation ancestry (Q10) as a function of hybrid index}
 \usage{
-tri_plot(hi = NULL, Q10 = NULL, pdf = TRUE, outf = "tri_plot.pdf")
+tri_plot(hi = NULL, Q10 = NULL, pdf = TRUE, outf = "tri_plot.pdf", ...)
 }
 \arguments{
 \item{hi}{a vector of hybrid index estimates (from est_h or est_Q)}
@@ -14,10 +14,12 @@ tri_plot(hi = NULL, Q10 = NULL, pdf = TRUE, outf = "tri_plot.pdf")
 \item{pdf}{a logical specifying whether results should be output to a pdf file}
 
 \item{outf}{a character string specifying the name of the output file if 'pdf=TRUE'}
+
+\item{...}{additional arguments for plotting}
 }
 \value{
 A plot is produced, but there is no return value
 }
 \description{
-Uses Hamiltonian Monte Carlo (HMC) for Bayesian inference of ancestry classes from genetic data. Ancestry classes denote the proportion of an individual's genome where both gene copies come from source 1 (Q11), both gene copies come from source 0 (Q00), or where one gene copy comes from source 1 and one from source 0.
+Creates a triangle plot of hybrid index versus interpopulation ancestry.
 }

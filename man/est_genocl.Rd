@@ -13,7 +13,11 @@ est_genocl(
   H = NULL,
   model = "genotype",
   ploidy = "diploid",
-  pldat = NULL
+  pldat = NULL,
+  hier = TRUE,
+  SDc = NULL,
+  SDv = NULL,
+  n_chains = 4
 )
 }
 \arguments{
@@ -34,6 +38,14 @@ est_genocl(
 \item{ploidy}{diploid or mixed}
 
 \item{pldat}{ploidy data for mixed ploidy}
+
+\item{hier}{boolean, fit hierarchical model (TRUE) or assume cline SDs known (FALSE)}
+
+\item{SDc}{known cline center SD on logit scale}
+
+\item{SDv}{known cline gradient SD on log10 scale}
+
+\item{n_chains}{number of HMC chains for posterior inference}
 }
 \value{
 list of parameter estimates and full HMC results from stan, this includes cline parameters (center and gradient) and standard deviations describing variability in clines across loci (SDc and SDv)

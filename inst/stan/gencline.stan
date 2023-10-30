@@ -26,7 +26,7 @@ data{
 	real<lower=0, upper=2> G[N, L]; /* 2D array of G*/
 	vector<lower=0, upper=1>[N] H; /* vector of hybrid indexes */
 	vector<lower=0, upper=1>[L] P0; /* parent 0 allele frequencies */
-	vector<lower=0, upper=1>[L] P1; /* parent 0 allele frequencies */
+	vector<lower=0, upper=1>[L] P1; /* parent 1 allele frequencies */
 }
 
 parameters{

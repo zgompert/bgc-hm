@@ -21,7 +21,7 @@ est_genocl(
 )
 }
 \arguments{
-\item{Gx}{genetic data for putative hybrids}
+\item{Gx}{genetic data for putative hybrids, matrix for known genotypes, list of matrixes for genotype likelihoods, matrix of ancestry for the ancestry model}
 
 \item{G0}{genetic data for parental reference set 0}
 

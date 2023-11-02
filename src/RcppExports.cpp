@@ -19,10 +19,12 @@ RcppExport SEXP _rcpp_module_boot_stan_fit4gencline_gl_mix_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4gencline_mix_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4gencline_one_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4gencline_one_gl_mod();
+RcppExport SEXP _rcpp_module_boot_stan_fit4gencline_one_gl_mix_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4gencline_one_mix_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4gencline_one_z_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4gencline_sdk_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4gencline_sdk_gl_mod();
+RcppExport SEXP _rcpp_module_boot_stan_fit4gencline_sdk_gl_mix_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4gencline_sdk_mix_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4gencline_sdk_z_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4gencline_z_mod();
@@ -36,10 +38,12 @@ static const R_CallMethodDef CallEntries[] = {
     {"_rcpp_module_boot_stan_fit4gencline_mix_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4gencline_mix_mod, 0},
     {"_rcpp_module_boot_stan_fit4gencline_one_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4gencline_one_mod, 0},
     {"_rcpp_module_boot_stan_fit4gencline_one_gl_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4gencline_one_gl_mod, 0},
+    {"_rcpp_module_boot_stan_fit4gencline_one_gl_mix_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4gencline_one_gl_mix_mod, 0},
     {"_rcpp_module_boot_stan_fit4gencline_one_mix_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4gencline_one_mix_mod, 0},
     {"_rcpp_module_boot_stan_fit4gencline_one_z_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4gencline_one_z_mod, 0},
     {"_rcpp_module_boot_stan_fit4gencline_sdk_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4gencline_sdk_mod, 0},
     {"_rcpp_module_boot_stan_fit4gencline_sdk_gl_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4gencline_sdk_gl_mod, 0},
+    {"_rcpp_module_boot_stan_fit4gencline_sdk_gl_mix_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4gencline_sdk_gl_mix_mod, 0},
     {"_rcpp_module_boot_stan_fit4gencline_sdk_mix_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4gencline_sdk_mix_mod, 0},
     {"_rcpp_module_boot_stan_fit4gencline_sdk_z_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4gencline_sdk_z_mod, 0},
     {"_rcpp_module_boot_stan_fit4gencline_z_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4gencline_z_mod, 0},

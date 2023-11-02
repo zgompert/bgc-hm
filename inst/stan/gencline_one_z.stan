@@ -4,17 +4,16 @@ functions {
 		phi = (h^vv)/((h^vv)+((1-h)^vv)*exp(uu));
 		return phi;
 	}
-	real calc_lik(real g, real p0, real p1, real h, real vv, real uu){
+	real calc_lik(real z, real h, real vv, real uu){
 		real prob;
 		real phi;
 		phi = calc_phi(h, vv, uu);
-        if(g==0)
-            prob = log(phi * (1-p1) + (1-phi) * (1-p0)) + log(phi * (1-p1) + (1-phi) * (1-p0));
-        else if (g==1) 
-            prob = log(phi * (1-p1) + (1-phi) * (1-p0)) + log(phi * p1 + (1-phi) * p0);
-        else    
-            prob = log(phi * p1 + (1-phi) * p0) + log(phi * p1 + (1-phi) * p0);
-
+        if(z==0)
+            prob = log(1-phi) + log(1-phi);
+        else if (z==1)
+            prob = log(2) + log(phi) + log(1-phi);
+        else
+            prob = log(phi) + log(phi);
 		return prob;
 	}
 }
@@ -22,10 +21,8 @@ functions {
 data{
 	int L; /* # of loci */
 	int N; /* # of organisms */
-	real<lower=0, upper=2> G[N]; /* 1D array of G*/
+	real<lower=0, upper=2> Z[N]; /* 1D array of ancestry*/
 	vector<lower=0, upper=1>[N] H; /* vector of hybrid indexes */
-	real<lower=0, upper=1> P0; /* parent 0 allele frequencies */
-	real<lower=0, upper=1> P1; /* parent 1 allele frequencies */
 	real<lower=0> sc; /* sigma for center*/
 	real<lower=0> sv; /* sigma for v*/
 }
@@ -44,7 +41,7 @@ model{
 
 	for(j in 1:N){
 		/* increment likelihood */
-		target += calc_lik(G[j], P0, P1, H[j], v, u);
+		target += calc_lik(Z[j], H[j], v, u);
 	}
 
 	/* increment prior on v and u */

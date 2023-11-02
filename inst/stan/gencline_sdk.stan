@@ -8,13 +8,12 @@ functions {
 		real prob;
 		real phi;
 		phi = calc_phi(h, vv, uu);
-                if(g==0)
-                        prob = log(phi * (1-p1) + (1-phi) * (1-p0)) + log(phi * (1-p1) + (1-phi) * (1-p0));
-                else if (g==1) 
-                        prob = log(phi * (1-p1) + (1-phi) * (1-p0)) + log(phi * p1 + (1-phi) * p0);
-                else    
-                        prob = log(phi * p1 + (1-phi) * p0) + log(phi * p1 + (1-phi) * p0);
-
+        if(g==0)
+            prob = log(phi * (1-p1) + (1-phi) * (1-p0)) + log(phi * (1-p1) + (1-phi) * (1-p0));
+        else if (g==1) 
+            prob = log(phi * (1-p1) + (1-phi) * (1-p0)) + log(phi * p1 + (1-phi) * p0);
+        else    
+            prob = log(phi * p1 + (1-phi) * p0) + log(phi * p1 + (1-phi) * p0);
 
 		return prob;
 	}

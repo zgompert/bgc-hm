@@ -43,7 +43,7 @@ generated quantities {
 	vector<lower=0, upper=1>[N] H; /* hybrid indexes, computed from Q */
 
 	for(j in 1:N){
-		H[j]<-Q[j][1] + 0.5 * Q[j][2];
+		H[j] = Q[j][1] + 0.5 * Q[j][2];
 	}
 }
 

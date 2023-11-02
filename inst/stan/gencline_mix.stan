@@ -4,14 +4,23 @@ functions {
 		phi = (h^vv)/((h^vv)+((1-h)^vv)*exp(uu));
 		return phi;
 	}
-	/* computes likelihood weighted by genotype likelihoods */
-	real calc_lik(real gl0, real gl1, real gl2, real p0, real p1, real h, real vv, real uu){
+	real calc_lik(real g, real p0, real p1, real h, real vv, real uu, real pl){
 		real prob;
 		real phi;
 		phi = calc_phi(h, vv, uu);
-        prob = log(gl0) + log(phi * (1-p1) + (1-phi) * (1-p0)) + log(phi * (1-p1) + (1-phi) * (1-p0)); 
-        prob += log(gl1) + log(phi * (1-p1) + (1-phi) * (1-p0)) + log(phi * p1 + (1-phi) * p0);                  
-        prob += log(gl2) + log(phi * p1 + (1-phi) * p0) + log(phi * p1 + (1-phi) * p0);
+		if(pl==2){/* diploid locus x ind */
+            if(g==0)
+                prob = log(phi * (1-p1) + (1-phi) * (1-p0)) + log(phi * (1-p1) + (1-phi) * (1-p0));
+            else if (g==1) 
+                prob = log(phi * (1-p1) + (1-phi) * (1-p0)) + log(phi * p1 + (1-phi) * p0);
+            else    
+                prob = log(phi * p1 + (1-phi) * p0) + log(phi * p1 + (1-phi) * p0);
+        } else { /* haploid locus x ind */
+            if(g==0)
+                prob = log(phi * (1-p1) + (1-phi) * (1-p0));
+            else
+               prob = log(phi * p1 + (1-phi) * p0) ;
+        }
 		return prob;
 	}
 }
@@ -19,9 +28,8 @@ functions {
 data{
 	int L; /* # of loci */
 	int N; /* # of organisms */
-	real<lower=0, upper=2> GL0[N, L]; /* 2D array of genlik 0*/
-	real<lower=0, upper=2> GL1[N, L]; /* 2D array of genlik 1*/
-	real<lower=0, upper=2> GL2[N, L]; /* 2D array of genlik 2*/
+	real<lower=0, upper=2> G[N, L]; /* 2D array of G*/
+	real<lower=0, upper=2> ploidy[N, L]; /* 2D array of ploidy */	
 	vector<lower=0, upper=1>[N] H; /* vector of hybrid indexes */
 	vector<lower=0, upper=1>[L] P0; /* parent 0 allele frequencies */
 	vector<lower=0, upper=1>[L] P1; /* parent 1 allele frequencies */
@@ -46,7 +54,7 @@ model{
 	for(i in 1:L){
 		for(j in 1:N){
 			/* increment likelihood */
-			target += calc_lik(GL0[j,i], GL1[j,i], GL2[j,i], P0[i], P1[i], H[j], v[i], u[i]);
+			target += calc_lik(G[j,i], P0[i], P1[i], H[j], v[i], u[i], ploidy[j,i]);
 		}
 	}
 	for(i in 1:(L)){

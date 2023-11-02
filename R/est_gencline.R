@@ -202,6 +202,35 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 		sdv<-quantile(rstan::extract(fit,"sdv")[[1]],probs=c(.5,.05,.95))
 		## create a list with parameter estimates plus full hmc object
         	Cout<-list(center=cc,gradient=cv,SDc=sdc,SDv=sdv,gencline_hmc=fit)
+	} else if(hier==FALSE & model=="genotype" & ploidy=="mixed"){
+	## known SD model, known genotypes, mixed ploidy
+		if(is.matrix(Gx)){
+			## generate initial values of cline parameters
+			initf<-function(L=dim(Gx)[2],chain_id=1){
+        			list(center=runif(L,.3,.7),v=runif(L,.9,1.1),alpha=chain_id)
+			}
+			init_ll<-lapply(1:n_chains, function(id) initf(chain_id = id))
+			dat<-list(L=dim(Gx)[2],N=dim(Gx)[1],G=Gx,H=H,P0=p0,P1=p1,sc=SDc,sv=SDv,
+			ploidy=pldat,init=init_ll)
+			fit<-rstan::sampling(stanmodels$gencline_sdk_mix,data=dat)
+			cc<-t(apply(rstan::extract(fit,"center")[[1]],2,quantile,probs=c(.5,.05,.95)))
+			cv<-t(apply(rstan::extract(fit,"v")[[1]],2,quantile,probs=c(.5,.05,.95)))
+
+		} else{ ## one snp
+			## generate initial values of cline parameters
+			initf<-function(chain_id=1){
+        			list(center=runif(1,.3,.7),v=runif(1,.9,1.1),alpha=chain_id)
+			}
+			init_ll<-lapply(1:n_chains, function(id) initf(chain_id = id))		
+			dat<-list(L=1,N=length(Gx),G=Gx,H=H,P0=p0,P1=p1,sc=SDc,sv=SDv,ploidy=pldat,
+			init=init_ll)
+			fit<-rstan::sampling(stanmodels$gencline_one_mix,data=dat)
+			cc<-quantile(rstan::extract(fit,"center")[[1]],probs=c(.5,.05,.95))
+			cv<-quantile(rstan::extract(fit,"v")[[1]],probs=c(.5,.05,.95))
+		}
+		## create a list with parameter estimates plus full hmc object
+        	Cout<-list(center=cc,gradient=cv,gencline_hmc=fit)
+
 	}
 	
 	

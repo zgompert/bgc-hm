@@ -25,7 +25,11 @@ This is a working version of the software, but not all options have been impleme
 
 The general hierarchical Bayesian model used for Bayesidan genomic cline analysis was described here:
 
+[Gompert Z, Buerkle CA (2011) Bayesian estimation of genomic clines. Molecular Ecology, 20:2111-2127.](https://onlinelibrary.wiley.com/doi/full/10.1111/j.1365-294X.2011.05074.x)
+
 The current set of models based on the log-logistic function and using HMC were first described here:
+
+[Fierno TJ, Semenov G, Dopman EB, Taylor SA, Larson EL, Gompert Z (2023) Quantitative analyses of coupling in hybrid zones. Cold Spring Harb Perspect Biol, a041434.](https://cshperspectives.cshlp.org/content/early/2023/09/21/cshperspect.a041434)
 
 The following paper (in the works) describes this specific R package:
 

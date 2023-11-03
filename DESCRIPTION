@@ -2,9 +2,9 @@ Package: bgchm
 Title: Bayesian Analyses of Hybrid Zones with Hamiltonian Monte Carlo 
 Version: 0.0.0.9000
 Authors@R: 
-    person("Zachariah", "Gompert", , "zach.gompert@usu.edu", role = c("aut", "cre"),
+    person("Zachariah", "Gompert", ,"zach.gompert@usu.edu", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-2248-2488"))
-Description: What the package does (one paragraph).
+Description: This is an R package for Bayesian analyses of population genomic data from hybrid zones, including Bayesian genomic cline analysis, estimation of hybrid indexes and ancestry classes, some geographic cline analyses, and accessory plotting functions. This package using Hamiltonian Monte Carlo (HMC) for sampling posterior distributions, with HMC sampling implemented via Stan.
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

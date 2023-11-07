@@ -2,6 +2,7 @@
 
 export(est_Q)
 export(est_genocl)
+export(est_geocl)
 export(est_hi)
 export(est_p)
 export(gencline_plot)

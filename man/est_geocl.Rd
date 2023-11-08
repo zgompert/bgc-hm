@@ -24,7 +24,7 @@ est_geocl(
 
 \item{Ids}{indexes designating which population each individual belongs to, indexes run from 1 to the number of populations}
 
-\item{model}{genotype, glik, or ancestry}
+\item{model}{genotype or glik}
 
 \item{ploidy}{diploid or mixed}
 

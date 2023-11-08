@@ -3,7 +3,7 @@ data{
 	int L; /* # of loci */
 	int J; /* # of populations */
 	real geo[J]; /* 1D array of geographic locations */
-	real<lower=0, upper=1> P[J, L]; /* 2D array of population allele frequencies */	
+	real P[J, L]; /* 2D array of logit population allele frequencies */	
 }
 
 parameters{
@@ -30,7 +30,7 @@ model{
 	for(i in 1:L){
 	    for(j in 1:J){
     		/* increment likelihood */
-    		target += normal_lpdf(logit(P[j,i]) | cent[i] + slope[i] * geo[j], serr);
+    		target += normal_lpdf(P[j,i] | cent[i] + slope[i] * geo[j], serr);
     	}	
 	}
 	/* increment priors */

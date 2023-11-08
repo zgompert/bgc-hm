@@ -6,29 +6,31 @@
 \usage{
 est_geocl(
   G = NULL,
+  P = NULL,
   Geo = NULL,
   Ids = NULL,
   model = "genotype",
   ploidy = "diploid",
-  pldat = NULL
+  pldat = NULL,
+  prec = 0.001
 )
 }
 \arguments{
+\item{G}{genetic data}
+
+\item{P}{allele frequency data}
+
+\item{Geo}{geographic coordinates for the sampled populations, these will be centered automatically}
+
+\item{Ids}{indexes designating which population each individual belongs to, indexes run from 1 to the number of populations}
+
 \item{model}{genotype, glik, or ancestry}
 
 \item{ploidy}{diploid or mixed}
 
 \item{pldat}{ploidy data for mixed ploidy}
 
-\item{Gx}{genetic data for putative hybrids}
-
-\item{G0}{genetic data for parental reference set 0}
-
-\item{G1}{genetic data for parental reference set 1}
-
-\item{p0}{allele frequencies for parental reference set 0}
-
-\item{p1}{allele frequencies for parental reference set 1}
+\item{prec}{precision for known allele frequencies, set to approximately 1/2N}
 }
 \value{
 list of parameter estimates and full HMC results from stan

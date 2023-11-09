@@ -2,9 +2,9 @@ functions {
 	/* computes likelihood weighted by genotype likelihoods */
 	real calc_lik(real gl0, real gl1, real gl2, real p){
 		real prob;
-        prob = log(gl0) + log(1-p) + log(1-p); 
-        prob = log_sum_exp(prob, log(gl1) + log(p) + log(1-p) + log(2));                  
-        prob = log_sum_exp(prob, log(gl2) + log(p) + log(p));
+        	prob = log(gl0) + log(1-p) + log(1-p); 
+       		prob = log_sum_exp(prob, log(gl1) + log(2) + log(p) + log(1-p));                  
+        	prob = log_sum_exp(prob, log(gl2) + log(p) + log(p));
 		return prob;
 	}
 }

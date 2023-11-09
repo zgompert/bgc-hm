@@ -10,9 +10,9 @@ functions {
 		real phi;
 		phi = calc_phi(h, vv, uu);
 		if(pl==2){/* diploid locus x ind */
-            prob = log(gl0) + log(phi * (1-p1) + (1-phi) * (1-p0)) + log(phi * (1-p1) + (1-phi) * (1-p0)); 
-            prob = log_sum_exp(prob, log(gl1) + log(phi * (1-p1) + (1-phi) * (1-p0)) + log(phi * p1 + (1-phi) * p0));                  
-            prob = log_sum_exp(prob, log(gl2) + log(phi * p1 + (1-phi) * p0) + log(phi * p1 + (1-phi) * p0));
+            	prob = log(gl0) + log(phi * (1-p1) + (1-phi) * (1-p0)) + log(phi * (1-p1) + (1-phi) * (1-p0)); 
+            	prob = log_sum_exp(prob, log(gl1) + log(2) + log(phi * (1-p1) + (1-phi) * (1-p0)) + log(phi * p1 + (1-phi) * p0));                  
+            	prob = log_sum_exp(prob, log(gl2) + log(phi * p1 + (1-phi) * p0) + log(phi * p1 + (1-phi) * p0));
 		} else { /* haploid locus x ind */
 		    prob = log(gl0) + log(phi * (1-p1) + (1-phi) * (1-p0));  
 		    /* store one copy alt allele as gl2 */                

@@ -17,38 +17,38 @@ est_geocl<-function(G=NULL,P=NULL,Geo=NULL,Ids=NULL,model="genotype",ploidy="dip
 
 	options(mc.cores = parallel::detectCores())
         
-    if(is.null(P)){ 
+	if(is.null(P)){ 
      	## need to first estimate population allele frequencies
        	## use analytical solution for the posterior
-       	if(model=="genotype" & ploidy=="diploid"){
-       	    P<-matrix(NA,nrow=length(Geo),ncol=dim(G)[2])
-       	    for(i in 1:dim(G)[2]){
-       		    Y<-tapply(X=G[,i],INDEX=Ids,sum)
-       		    N<-tapply(X=G[,i]>=0,INDEX=Ids,sum)
-       		    P[,i]<-pbeta(q=0.5,Y+0.5,N-Y+0.5)
-       	    }
-	    } else if(model=="genotype" & ploidy=="mixed"){
-	        P<-matrix(NA,nrow=length(Geo),ncol=dim(G)[2])
-       	    for(i in 1:dim(G)[2]){
-       		    Y<-tapply(X=G[,i],INDEX=Ids,sum)
-       		    N<-tapply(X=pldat[,i],INDEX=Ids,sum)
-       		    P[,i]<-pbeta(q=0.5,Y+0.5,N-Y+0.5)
-       	    }
-	    } else if(model=="glik" & ploidy=="diploid"){
-	        dat<-list(L=dim(G[[1]])[2],N=dim(G[[1]])[1],J=length(Geo),GL0=G[[1]],GL1=G[[2]],GL2=G[[3]],pids=Ids)
-	        fit<-rstan::sampling(stanmodels$popp_gl,data=dat)
-	        Px<-rstan::extract(fit,"P")[[1]]
-	        P<-apply(Px,c(2,3),median) 
-	    } else { ## glik and mixed
-	        dat<-list(L=dim(G[[1]])[2],N=dim(G[[1]])[1],J=length(Geo),GL0=G[[1]],GL1=G[[2]],GL2=G[[3]],pids=Ids)
-	        fit<-rstan::sampling(stanmodels$popp_gl,data=dat)
-	        Px<-rstan::extract(fit,"P")[[1]]
-	        P<-apply(Px,c(2,3),median) 
-	    }
+		if(model=="genotype" & ploidy=="diploid"){
+			P<-matrix(NA,nrow=length(Geo),ncol=dim(G)[2])
+			for(i in 1:dim(G)[2]){
+				Y<-tapply(X=G[,i],INDEX=Ids,sum)
+				N<-tapply(X=G[,i]>=0,INDEX=Ids,sum)
+				P[,i]<-pbeta(q=0.5,Y+0.5,N-Y+0.5)
+			}
+		} else if(model=="genotype" & ploidy=="mixed"){
+			P<-matrix(NA,nrow=length(Geo),ncol=dim(G)[2])
+			for(i in 1:dim(G)[2]){
+				Y<-tapply(X=G[,i],INDEX=Ids,sum)
+				N<-tapply(X=pldat[,i],INDEX=Ids,sum)
+				P[,i]<-pbeta(q=0.5,Y+0.5,N-Y+0.5)
+			}
+		} else if(model=="glik" & ploidy=="diploid"){
+			dat<-list(L=dim(G[[1]])[2],N=dim(G[[1]])[1],J=length(Geo),GL0=G[[1]],GL1=G[[2]],GL2=G[[3]],pids=Ids)
+			fit<-rstan::sampling(stanmodels$popp_gl,data=dat)
+			Px<-rstan::extract(fit,"P")[[1]]
+			P<-apply(Px,c(2,3),median) 
+		} else { ## glik and mixed
+			dat<-list(L=dim(G[[1]])[2],N=dim(G[[1]])[1],J=length(Geo),GL0=G[[1]],GL1=G[[2]],GL2=G[[3]],pids=Ids)
+			fit<-rstan::sampling(stanmodels$popp_gl,data=dat)
+			Px<-rstan::extract(fit,"P")[[1]]
+			P<-apply(Px,c(2,3),median) 
+		}
 	}
 	## avoids log(0) and divisions by 0
-    P[P < prec]<-prec
-    P[P > (1-prec)]<-1-prec
+	P[P < prec]<-prec
+	P[P > (1-prec)]<-1-prec
     	
 	## center geography
 	Geo<-Geo-mean(Geo)

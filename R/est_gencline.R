@@ -38,6 +38,18 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 	    stop("pldat cannot be NULL for mixed ploitdy")
 	}
 	
+	## estimate parental allele frequencies if not provided
+	if(is.null(p0) | is.null(p1)){
+		po<-est_p(G0=G0,G1=G1,model=model,ploidy=ploidy,pldat=pldat)
+		p0<-po$p0[,1]
+		p1<-po$p1[,1]
+	}
+	
+	## now have population allele frequencies, just need hybrid ploidy data if it
+	## was provided as a list
+	if(is.list(pldat)==TRUE){
+		pldat<-pldat[[1]]
+	}
 	
 	## fit appropriate genomic cline model based on options
 	if(hier==TRUE & model=="genotype" & ploidy=="diploid"){

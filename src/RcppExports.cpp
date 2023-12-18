@@ -13,6 +13,11 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 
 
 RcppExport SEXP _rcpp_module_boot_stan_fit4Q_mod();
+RcppExport SEXP _rcpp_module_boot_stan_fit4Q_gl_mod();
+RcppExport SEXP _rcpp_module_boot_stan_fit4Q_gl_mix_mod();
+RcppExport SEXP _rcpp_module_boot_stan_fit4Q_mix_mod();
+RcppExport SEXP _rcpp_module_boot_stan_fit4Q_z_mod();
+RcppExport SEXP _rcpp_module_boot_stan_fit4Q_z_mix_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4gencline_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4gencline_gl_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4gencline_gl_mix_mod();
@@ -34,8 +39,10 @@ RcppExport SEXP _rcpp_module_boot_stan_fit4gencline_z_mix_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4geocline_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4hi_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4hi_gl_mod();
+RcppExport SEXP _rcpp_module_boot_stan_fit4hi_gl_mix_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4hi_mix_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4hi_z_mod();
+RcppExport SEXP _rcpp_module_boot_stan_fit4hi_z_mix_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4p_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4p_gl_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4p_gl_mix_mod();
@@ -45,6 +52,11 @@ RcppExport SEXP _rcpp_module_boot_stan_fit4popp_gl_mix_mod();
 
 static const R_CallMethodDef CallEntries[] = {
     {"_rcpp_module_boot_stan_fit4Q_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4Q_mod, 0},
+    {"_rcpp_module_boot_stan_fit4Q_gl_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4Q_gl_mod, 0},
+    {"_rcpp_module_boot_stan_fit4Q_gl_mix_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4Q_gl_mix_mod, 0},
+    {"_rcpp_module_boot_stan_fit4Q_mix_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4Q_mix_mod, 0},
+    {"_rcpp_module_boot_stan_fit4Q_z_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4Q_z_mod, 0},
+    {"_rcpp_module_boot_stan_fit4Q_z_mix_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4Q_z_mix_mod, 0},
     {"_rcpp_module_boot_stan_fit4gencline_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4gencline_mod, 0},
     {"_rcpp_module_boot_stan_fit4gencline_gl_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4gencline_gl_mod, 0},
     {"_rcpp_module_boot_stan_fit4gencline_gl_mix_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4gencline_gl_mix_mod, 0},
@@ -66,8 +78,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_rcpp_module_boot_stan_fit4geocline_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4geocline_mod, 0},
     {"_rcpp_module_boot_stan_fit4hi_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4hi_mod, 0},
     {"_rcpp_module_boot_stan_fit4hi_gl_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4hi_gl_mod, 0},
+    {"_rcpp_module_boot_stan_fit4hi_gl_mix_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4hi_gl_mix_mod, 0},
     {"_rcpp_module_boot_stan_fit4hi_mix_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4hi_mix_mod, 0},
     {"_rcpp_module_boot_stan_fit4hi_z_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4hi_z_mod, 0},
+    {"_rcpp_module_boot_stan_fit4hi_z_mix_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4hi_z_mix_mod, 0},
     {"_rcpp_module_boot_stan_fit4p_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4p_mod, 0},
     {"_rcpp_module_boot_stan_fit4p_gl_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4p_gl_mod, 0},
     {"_rcpp_module_boot_stan_fit4p_gl_mix_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4p_gl_mix_mod, 0},

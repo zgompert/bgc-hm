@@ -129,7 +129,7 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 	} else if(hier==TRUE & model=="glik" & ploidy=="diploid"){
 	## hierachical model, genotype likelihoods, diploids
 		## generate initial values of cline parameters
-		initf<-function(L=dim(Gx)[2],chain_id=1){
+		initf<-function(L=dim(Gx[[1]])[2],chain_id=1){
         		list(center=runif(L,.3,.7),v=runif(L,.9,1.1),alpha=chain_id)
 		}
 		init_ll<-lapply(1:n_chains, function(id) initf(chain_id = id))

@@ -11,15 +11,18 @@ tri_plot(hi = NULL, Q10 = NULL, pdf = TRUE, outf = "tri_plot.pdf", ...)
 
 \item{Q10}{a vector of interpopulation ancestry estimates (from est_Q)}
 
-\item{pdf}{a logical specifying whether results should be output to a pdf file}
+\item{pdf}{a logical specifying whether results should be output to a pdf file; if false the plot is sent to the default graphics device.}
 
-\item{outf}{a character string specifying the name of the output file if 'pdf=TRUE'}
+\item{outf}{a character string specifying the name of the output file if 'pdf=TRUE' \link{default = tri_plot.pdf}.}
 
-\item{...}{additional arguments for plotting}
+\item{...}{additional arguments for plotting, see options in par and plot.}
 }
 \value{
-A plot is produced, but there is no return value
+A plot is produced, but there is no return value.
 }
 \description{
 Creates a triangle plot of hybrid index versus interpopulation ancestry.
+}
+\details{
+This function generates a scatterplot of interpopulation (a.k.a. interclass or interspecies) ancestry as a function of hybrid index. In other words, this shows the proportion of the genome where each putative hybrid inherited a gene copy from both parents, versus the proportion of the genome inherited from parent 1. Theoretical maxima for interpopulation ancestry given a value of hybrid index are shown as a triangle. Individuals with maximal values of interpopulation ancestry given their hybrid index have one or more non-hybrid parents, meaning they are F1s (hybrid index = 0.5 and interpopulation ancestry = 1) or backcrosses (other cases of maximal interpopulation ancestry). Of course, uncertainty in these admixture parameters can pull point estimates away from these theoretical expectations.
 }

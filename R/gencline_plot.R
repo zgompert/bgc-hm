@@ -3,14 +3,16 @@
 #' Plots a set of genomic clines.
 #' @param center vector of cline centers (from est_gencline.R)
 #' @param v vector of cline gradients (from est_gencline.R) 
-#' @param pdf a logical specifying whether results should be output to a pdf file
-#' @param outf a character string specifying the name of the output file if 'pdf=TRUE'
-#' @param ... additional arguments for plotting
+#' @param pdf a logical specifying whether results should be output to a pdf file; if false the plot is sent to the default graphics device. 
+#' @param outf a character string specifying the name of the output file if 'pdf=TRUE' [default = cline_plot.pdf].
+#' @param ... additional arguments for plotting, see options in par and plot.
 #'
-#' @return A plot is produced, but there is no return value
+#' @details This funciton plots genomic clines for set of loci, that is the probability of local ancestry from parental population 1 at a locus given hybrid index (the overall proportion of an individual's genome inherited from population 1). The clines for all loci are shown on a single plot, with one line per locus. A 1:1 dashed line denotes the null expected ancestry probability if all loci exhibit dynamics precisely equal to the genome-wide average intogression.
+#'
+#' @return A plot is produced, but there is no return value.
 #'
 #' @export
-gencline_plot<-function (center=NULL, v=NULL, pdf=TRUE, outf="tri_plot.pdf", ...){ 
+gencline_plot<-function (center=NULL, v=NULL, pdf=TRUE, outf="cline_plot.pdf", ...){ 
     if (is.null(center) == TRUE | is.null(v) == TRUE) 
         stop("error, input data are not provided")
     if (pdf == TRUE) 

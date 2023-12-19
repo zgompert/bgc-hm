@@ -4,22 +4,31 @@
 \alias{gencline_plot}
 \title{Plots genomic clines for a set of loci}
 \usage{
-gencline_plot(center = NULL, v = NULL, pdf = TRUE, outf = "tri_plot.pdf", ...)
+gencline_plot(
+  center = NULL,
+  v = NULL,
+  pdf = TRUE,
+  outf = "cline_plot.pdf",
+  ...
+)
 }
 \arguments{
 \item{center}{vector of cline centers (from est_gencline.R)}
 
 \item{v}{vector of cline gradients (from est_gencline.R)}
 
-\item{pdf}{a logical specifying whether results should be output to a pdf file}
+\item{pdf}{a logical specifying whether results should be output to a pdf file; if false the plot is sent to the default graphics device.}
 
-\item{outf}{a character string specifying the name of the output file if 'pdf=TRUE'}
+\item{outf}{a character string specifying the name of the output file if 'pdf=TRUE' \link{default = cline_plot.pdf}.}
 
-\item{...}{additional arguments for plotting}
+\item{...}{additional arguments for plotting, see options in par and plot.}
 }
 \value{
-A plot is produced, but there is no return value
+A plot is produced, but there is no return value.
 }
 \description{
 Plots a set of genomic clines.
+}
+\details{
+This funciton plots genomic clines for set of loci, that is the probability of local ancestry from parental population 1 at a locus given hybrid index (the overall proportion of an individual's genome inherited from population 1). The clines for all loci are shown on a single plot, with one line per locus. A 1:1 dashed line denotes the null expected ancestry probability if all loci exhibit dynamics precisely equal to the genome-wide average intogression.
 }

@@ -88,7 +88,7 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 		if(dim(Gx)[2]==1){stop("at least two loci required for the hierarchical model")}
 
 		fit<-rstan::sampling(stanmodels$gencline,data=dat,
-		iter=n_iters,warmup=p_warmup,thin=n_thin)
+		iter=n_iters,warmup=n_warmup,thin=n_thin)
 		cc<-t(apply(rstan::extract(fit,"center")[[1]],2,quantile,probs=c(.5,.05,.95)))
 		cv<-t(apply(rstan::extract(fit,"v")[[1]],2,quantile,probs=c(.5,.05,.95)))
 		sdc<-quantile(rstan::extract(fit,"sdc")[[1]],probs=c(.5,.05,.95))
@@ -106,7 +106,7 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 			dat<-list(L=dim(Gx)[2],N=dim(Gx)[1],G=Gx,H=H,P0=p0,P1=p1,sc=SDc,sv=SDv,
 			init=init_ll)
 			fit<-rstan::sampling(stanmodels$gencline_sdk,data=dat,
-			iter=n_iters,warmup=p_warmup,thin=n_thin)
+			iter=n_iters,warmup=n_warmup,thin=n_thin)
 			cc<-t(apply(rstan::extract(fit,"center")[[1]],2,quantile,probs=c(.5,.05,.95)))
 			cv<-t(apply(rstan::extract(fit,"v")[[1]],2,quantile,probs=c(.5,.05,.95)))
 
@@ -119,7 +119,7 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 			dat<-list(L=1,N=length(Gx),G=Gx,H=H,P0=p0,P1=p1,sc=SDc,sv=SDv,
 			init=init_ll)
 			fit<-rstan::sampling(stanmodels$gencline_one,data=dat,
-			iter=n_iters,warmup=p_warmup,thin=n_thin)
+			iter=n_iters,warmup=n_warmup,thin=n_thin)
 			cc<-quantile(rstan::extract(fit,"center")[[1]],probs=c(.5,.05,.95))
 			cv<-quantile(rstan::extract(fit,"v")[[1]],probs=c(.5,.05,.95))
 		}
@@ -139,7 +139,7 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 		if(dim(Gx[[1]])[2]==1){stop("at least two loci required for the hierarchical model")}
 
 		fit<-rstan::sampling(stanmodels$gencline_gl,data=dat,
-			iter=n_iters,warmup=p_warmup,thin=n_thin)
+			iter=n_iters,warmup=n_warmup,thin=n_thin)
 		cc<-t(apply(rstan::extract(fit,"center")[[1]],2,quantile,probs=c(.5,.05,.95)))
 		cv<-t(apply(rstan::extract(fit,"v")[[1]],2,quantile,probs=c(.5,.05,.95)))
 		sdc<-quantile(rstan::extract(fit,"sdc")[[1]],probs=c(.5,.05,.95))
@@ -158,7 +158,7 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 			GL0=Gx[[1]],GL1=Gx[[2]],GL2=Gx[[3]],H=H,P0=p0,P1=p1,sc=SDc,sv=SDv,
 			init=init_ll)
 			fit<-rstan::sampling(stanmodels$gencline_sdk_gl,data=dat,
-			iter=n_iters,warmup=p_warmup,thin=n_thin)
+			iter=n_iters,warmup=n_warmup,thin=n_thin)
 			cc<-t(apply(rstan::extract(fit,"center")[[1]],2,quantile,probs=c(.5,.05,.95)))
 			cv<-t(apply(rstan::extract(fit,"v")[[1]],2,quantile,probs=c(.5,.05,.95)))
 
@@ -171,7 +171,7 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 			dat<-list(L=1,N=length(Gx[[1]]),GL0=Gx[[1]],GL1=Gx[[2]],GL2=Gx[[3]],
 			H=H,P0=p0,P1=p1,sc=SDc,sv=SDv,init=init_ll)
 			fit<-rstan::sampling(stanmodels$gencline_one_gl,data=dat,
-			iter=n_iters,warmup=p_warmup,thin=n_thin)
+			iter=n_iters,warmup=n_warmup,thin=n_thin)
 			cc<-quantile(rstan::extract(fit,"center")[[1]],probs=c(.5,.05,.95))
 			cv<-quantile(rstan::extract(fit,"v")[[1]],probs=c(.5,.05,.95))
 		}
@@ -189,7 +189,7 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 		if(dim(Gx)[2]==1){stop("at least two loci required for the hierarchical model")}
 
 		fit<-rstan::sampling(stanmodels$gencline_z,data=dat,
-			iter=n_iters,warmup=p_warmup,thin=n_thin)
+			iter=n_iters,warmup=n_warmup,thin=n_thin)
 		cc<-t(apply(rstan::extract(fit,"center")[[1]],2,quantile,probs=c(.5,.05,.95)))
 		cv<-t(apply(rstan::extract(fit,"v")[[1]],2,quantile,probs=c(.5,.05,.95)))
 		sdc<-quantile(rstan::extract(fit,"sdc")[[1]],probs=c(.5,.05,.95))
@@ -207,7 +207,7 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 			dat<-list(L=dim(Gx)[2],N=dim(Gx)[1],Z=Gx,H=H,sc=SDc,sv=SDv,
 			init=init_ll)
 			fit<-rstan::sampling(stanmodels$gencline_sdk_z,data=dat,
-			iter=n_iters,warmup=p_warmup,thin=n_thin)
+			iter=n_iters,warmup=n_warmup,thin=n_thin)
 			cc<-t(apply(rstan::extract(fit,"center")[[1]],2,quantile,probs=c(.5,.05,.95)))
 			cv<-t(apply(rstan::extract(fit,"v")[[1]],2,quantile,probs=c(.5,.05,.95)))
 
@@ -220,7 +220,7 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 			dat<-list(L=1,N=length(Gx),Z=Gx,H=H,sc=SDc,sv=SDv,
 			init=init_ll)
 			fit<-rstan::sampling(stanmodels$gencline_one_z,data=dat,
-			iter=n_iters,warmup=p_warmup,thin=n_thin)
+			iter=n_iters,warmup=n_warmup,thin=n_thin)
 			cc<-quantile(rstan::extract(fit,"center")[[1]],probs=c(.5,.05,.95))
 			cv<-quantile(rstan::extract(fit,"v")[[1]],probs=c(.5,.05,.95))
 		}
@@ -240,7 +240,7 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 		if(dim(Gx)[2]==1){stop("at least two loci required for the hierarchical model")}
 
 		fit<-rstan::sampling(stanmodels$gencline_mix,data=dat,
-			iter=n_iters,warmup=p_warmup,thin=n_thin)
+			iter=n_iters,warmup=n_warmup,thin=n_thin)
 		cc<-t(apply(rstan::extract(fit,"center")[[1]],2,quantile,probs=c(.5,.05,.95)))
 		cv<-t(apply(rstan::extract(fit,"v")[[1]],2,quantile,probs=c(.5,.05,.95)))
 		sdc<-quantile(rstan::extract(fit,"sdc")[[1]],probs=c(.5,.05,.95))
@@ -258,7 +258,7 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 			dat<-list(L=dim(Gx)[2],N=dim(Gx)[1],G=Gx,H=H,P0=p0,P1=p1,sc=SDc,sv=SDv,
 			ploidy=pldat,init=init_ll)
 			fit<-rstan::sampling(stanmodels$gencline_sdk_mix,data=dat,
-			iter=n_iters,warmup=p_warmup,thin=n_thin)
+			iter=n_iters,warmup=n_warmup,thin=n_thin)
 			cc<-t(apply(rstan::extract(fit,"center")[[1]],2,quantile,probs=c(.5,.05,.95)))
 			cv<-t(apply(rstan::extract(fit,"v")[[1]],2,quantile,probs=c(.5,.05,.95)))
 
@@ -271,7 +271,7 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 			dat<-list(L=1,N=length(Gx),G=Gx,H=H,P0=p0,P1=p1,sc=SDc,sv=SDv,ploidy=pldat,
 			init=init_ll)
 			fit<-rstan::sampling(stanmodels$gencline_one_mix,data=dat,
-			iter=n_iters,warmup=p_warmup,thin=n_thin)
+			iter=n_iters,warmup=n_warmup,thin=n_thin)
 			cc<-quantile(rstan::extract(fit,"center")[[1]],probs=c(.5,.05,.95))
 			cv<-quantile(rstan::extract(fit,"v")[[1]],probs=c(.5,.05,.95))
 		}
@@ -290,7 +290,7 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 		if(dim(Gx[[1]])[2]==1){stop("at least two loci required for the hierarchical model")}
 
 		fit<-rstan::sampling(stanmodels$gencline_gl_mix,data=dat,
-			iter=n_iters,warmup=p_warmup,thin=n_thin)
+			iter=n_iters,warmup=n_warmup,thin=n_thin)
 		cc<-t(apply(rstan::extract(fit,"center")[[1]],2,quantile,probs=c(.5,.05,.95)))
 		cv<-t(apply(rstan::extract(fit,"v")[[1]],2,quantile,probs=c(.5,.05,.95)))
 		sdc<-quantile(rstan::extract(fit,"sdc")[[1]],probs=c(.5,.05,.95))
@@ -309,7 +309,7 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 			GL0=Gx[[1]],GL1=Gx[[2]],GL2=Gx[[3]],H=H,P0=p0,P1=p1,sc=SDc,sv=SDv,
 			ploidy=pldat,init=init_ll)
 			fit<-rstan::sampling(stanmodels$gencline_sdk_gl_mix,data=dat,
-			iter=n_iters,warmup=p_warmup,thin=n_thin)
+			iter=n_iters,warmup=n_warmup,thin=n_thin)
 			cc<-t(apply(rstan::extract(fit,"center")[[1]],2,quantile,probs=c(.5,.05,.95)))
 			cv<-t(apply(rstan::extract(fit,"v")[[1]],2,quantile,probs=c(.5,.05,.95)))
 
@@ -322,7 +322,7 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 			dat<-list(L=1,N=length(Gx[[1]]),GL0=Gx[[1]],GL1=Gx[[2]],GL2=Gx[[3]],
 			H=H,P0=p0,P1=p1,sc=SDc,sv=SDv,ploidy=pldat,init=init_ll)
 			fit<-rstan::sampling(stanmodels$gencline_one_gl_mix,data=dat,
-			iter=n_iters,warmup=p_warmup,thin=n_thin)
+			iter=n_iters,warmup=n_warmup,thin=n_thin)
 			cc<-quantile(rstan::extract(fit,"center")[[1]],probs=c(.5,.05,.95))
 			cv<-quantile(rstan::extract(fit,"v")[[1]],probs=c(.5,.05,.95))
 		}
@@ -340,7 +340,7 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 		if(dim(Gx)[2]==1){stop("at least two loci required for the hierarchical model")}
 
 		fit<-rstan::sampling(stanmodels$gencline_z_mix,data=dat,
-			iter=n_iters,warmup=p_warmup,thin=n_thin)
+			iter=n_iters,warmup=n_warmup,thin=n_thin)
 		cc<-t(apply(rstan::extract(fit,"center")[[1]],2,quantile,probs=c(.5,.05,.95)))
 		cv<-t(apply(rstan::extract(fit,"v")[[1]],2,quantile,probs=c(.5,.05,.95)))
 		sdc<-quantile(rstan::extract(fit,"sdc")[[1]],probs=c(.5,.05,.95))
@@ -358,7 +358,7 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 			dat<-list(L=dim(Gx)[2],N=dim(Gx)[1],Z=Gx,H=H,sc=SDc,sv=SDv,
 			ploidy=pldat,init=init_ll)
 			fit<-rstan::sampling(stanmodels$gencline_sdk_z_mix,data=dat,
-			iter=n_iters,warmup=p_warmup,thin=n_thin)
+			iter=n_iters,warmup=n_warmup,thin=n_thin)
 			cc<-t(apply(rstan::extract(fit,"center")[[1]],2,quantile,probs=c(.5,.05,.95)))
 			cv<-t(apply(rstan::extract(fit,"v")[[1]],2,quantile,probs=c(.5,.05,.95)))
 
@@ -371,7 +371,7 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 			dat<-list(L=1,N=length(Gx),Z=Gx,H=H,sc=SDc,sv=SDv,ploidy=pldat,
 			init=init_ll)
 			fit<-rstan::sampling(stanmodels$gencline_one_z_mix,data=dat,
-			iter=n_iters,warmup=p_warmup,thin=n_thin)
+			iter=n_iters,warmup=n_warmup,thin=n_thin)
 			cc<-quantile(rstan::extract(fit,"center")[[1]],probs=c(.5,.05,.95))
 			cv<-quantile(rstan::extract(fit,"v")[[1]],probs=c(.5,.05,.95))
 		}

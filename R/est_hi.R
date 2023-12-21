@@ -73,7 +73,7 @@ est_hi<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,model="genotype",ploidy
 		## diploid with known genotypes
 		dat<-list(L=dim(Gx)[2],N=dim(Gx)[1],G=Gx,P0=p0,P1=p1)
 		fit<-rstan::sampling(stanmodels$hi,data=dat,
-                   iter=n_iters,warmup=p_warmup,thin=n_thin)
+                   iter=n_iters,warmup=n_warmup,thin=n_thin)
 		hi<-t(apply(rstan::extract(fit,"H")[[1]],2,quantile,probs=c(.5,.025,.05,.95,.975)))
 		## create a list with parameter estimates plus full hmc object
 		hiout<-list(hi=hi,hi_hmc=fit)
@@ -83,7 +83,7 @@ est_hi<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,model="genotype",ploidy
 		dat<-list(L=dim(Gx[[1]])[2],N=dim(Gx[[1]])[1],GL0=Gx[[1]],GL1=Gx[[2]],GL2=Gx[[3]]
 			  ,P0=p0,P1=p1)
 		fit<-rstan::sampling(stanmodels$hi_gl,data=dat,
-                   iter=n_iters,warmup=p_warmup,thin=n_thin)
+                   iter=n_iters,warmup=n_warmup,thin=n_thin)
 		hi<-t(apply(rstan::extract(fit,"H")[[1]],2,quantile,probs=c(.5,.025,.05,.95,.975)))
 		## create a list with parameter estimates plus full hmc object
 		hiout<-list(hi=hi,hi_hmc=fit)
@@ -93,7 +93,7 @@ est_hi<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,model="genotype",ploidy
 		return(hiout)
 		dat<-list(L=dim(Gx)[2],N=dim(Gx)[1],Z=Gx)
 		fit<-rstan::sampling(stanmodels$hi_z,data=dat,
-                   iter=n_iters,warmup=p_warmup,thin=n_thin)
+                   iter=n_iters,warmup=n_warmup,thin=n_thin)
 		hi<-t(apply(rstan::extract(fit,"H")[[1]],2,quantile,probs=c(.5,.025,.05,.95,.975)))
 		## create a list with parameter estimates plus full hmc object
 		hiout<-list(hi=hi,hi_hmc=fit)
@@ -101,7 +101,7 @@ est_hi<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,model="genotype",ploidy
 		## mixed ploidy with known genotypes
 		dat<-list(L=dim(Gx)[2],N=dim(Gx)[1],G=Gx,P0=p0,P1=p1,ploidy=pldat)
 		fit<-rstan::sampling(stanmodels$hi_mix,data=dat,
-                   iter=n_iters,warmup=p_warmup,thin=n_thin)
+                   iter=n_iters,warmup=n_warmup,thin=n_thin)
 		hi<-t(apply(rstan::extract(fit,"H")[[1]],2,quantile,probs=c(.5,.025,.05,.95,.975)))
 		## create a list with parameter estimates plus full hmc object
 		hiout<-list(hi=hi,hi_hmc=fit)
@@ -111,7 +111,7 @@ est_hi<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,model="genotype",ploidy
 		dat<-list(L=dim(Gx[[1]])[2],N=dim(Gx[[1]])[1],GL0=Gx[[1]],GL1=Gx[[2]],GL2=Gx[[3]]
 			  ,P0=p0,P1=p1,ploidy=pldat)
 		fit<-rstan::sampling(stanmodels$hi_gl_mix,data=dat,
-                   iter=n_iters,warmup=p_warmup,thin=n_thin)
+                   iter=n_iters,warmup=n_warmup,thin=n_thin)
 		hi<-t(apply(rstan::extract(fit,"H")[[1]],2,quantile,probs=c(.5,.025,.05,.95,.975)))
 		## create a list with parameter estimates plus full hmc object
 		hiout<-list(hi=hi,hi_hmc=fit)
@@ -121,7 +121,7 @@ est_hi<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,model="genotype",ploidy
 		return(hiout)
 		dat<-list(L=dim(Gx)[2],N=dim(Gx)[1],Z=Gx,ploidy=pldat)
 		fit<-rstan::sampling(stanmodels$hi_z_mix,data=dat,
-                   iter=n_iters,warmup=p_warmup,thin=n_thin)
+                   iter=n_iters,warmup=n_warmup,thin=n_thin)
 		hi<-t(apply(rstan::extract(fit,"H")[[1]],2,quantile,probs=c(.5,.025,.05,.95,.975)))
 		## create a list with parameter estimates plus full hmc object
 		hiout<-list(hi=hi,hi_hmc=fit)

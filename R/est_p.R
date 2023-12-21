@@ -23,7 +23,7 @@
 #'
 #' @export
 est_p<-function(G0=NULL,G1=NULL,model="genotype",ploidy="diploid",pldat=NULL,
-	hier=TRUE,SDc=NULL,SDv=NULL,n_chains=4,n_iters=2000,p_warmup=0.5,n_thin=1,n_cores=NULL){
+	n_chains=4,n_iters=2000,p_warmup=0.5,n_thin=1,n_cores=NULL){
 
         ## get or set number of cores for HMC
         if(is.null(n_cores)){
@@ -38,7 +38,8 @@ est_p<-function(G0=NULL,G1=NULL,model="genotype",ploidy="diploid",pldat=NULL,
 
 	if(model=="genotype" & ploidy=="diploid"){
 		dat<-list(L=dim(G0)[2],N0=dim(G0)[1],N1=dim(G1)[1],G0=G0,G1=G1)
-		fit<-rstan::sampling(stanmodels$p,data=dat)
+		fit<-rstan::sampling(stanmodels$p,data=dat,
+			iter=n_iters,warmup=n_warmup,thin=n_thin)
 		p0<-t(apply(rstan::extract(fit,"P0")[[1]],2,quantile,probs=c(.5,.025,.05,.95,.975)))
 		p1<-t(apply(rstan::extract(fit,"P1")[[1]],2,quantile,probs=c(.5,.025,.05,.95,.975)))
 		## create a list with parameter estimates plus full hmc object
@@ -48,7 +49,8 @@ est_p<-function(G0=NULL,G1=NULL,model="genotype",ploidy="diploid",pldat=NULL,
 	} else if(model=="glik" & ploidy=="diploid"){
 		dat<-list(L=dim(G0[[1]])[2],N0=dim(G0[[1]])[1],N1=dim(G1[[1]])[1],
 		G00=G0[[1]],G10=G1[[1]],G01=G0[[2]],G11=G1[[2]],G02=G0[[3]],G12=G1[[3]])
-		fit<-rstan::sampling(stanmodels$p_gl,data=dat)
+		fit<-rstan::sampling(stanmodels$p_gl,data=dat,
+			iter=n_iters,warmup=n_warmup,thin=n_thin)
 		p0<-t(apply(rstan::extract(fit,"P0")[[1]],2,quantile,probs=c(.5,.025,.05,.95,.975)))
 		p1<-t(apply(rstan::extract(fit,"P1")[[1]],2,quantile,probs=c(.5,.025,.05,.95,.975)))
 		## create a list with parameter estimates plus full hmc object
@@ -57,7 +59,8 @@ est_p<-function(G0=NULL,G1=NULL,model="genotype",ploidy="diploid",pldat=NULL,
 	} else if(model=="genotype" & ploidy=="mixed"){
 		dat<-list(L=dim(G0)[2],N0=dim(G0)[1],N1=dim(G1)[1],G0=G0,G1=G1,
 		ploidy0=pldat[[2]],ploidy1=pldat[[3]])
-		fit<-rstan::sampling(stanmodels$p_mix,data=dat)
+		fit<-rstan::sampling(stanmodels$p_mix,data=dat,
+			iter=n_iters,warmup=n_warmup,thin=n_thin)
 		p0<-t(apply(rstan::extract(fit,"P0")[[1]],2,quantile,probs=c(.5,.025,.05,.95,.975)))
 		p1<-t(apply(rstan::extract(fit,"P1")[[1]],2,quantile,probs=c(.5,.025,.05,.95,.975)))
 		## create a list with parameter estimates plus full hmc object
@@ -67,7 +70,8 @@ est_p<-function(G0=NULL,G1=NULL,model="genotype",ploidy="diploid",pldat=NULL,
 		dat<-list(L=dim(G0[[1]])[2],N0=dim(G0[[1]])[1],N1=dim(G1[[1]])[1],
 		G00=G0[[1]],G10=G1[[1]],G01=G0[[2]],G11=G1[[2]],G02=G0[[3]],G12=G1[[3]],
 		ploidy0=pldat[[2]],ploidy1=pldat[[3]])
-		fit<-rstan::sampling(stanmodels$p_gl_mix,data=dat)
+		fit<-rstan::sampling(stanmodels$p_gl_mix,data=dat,
+			iter=n_iters,warmup=n_warmup,thin=n_thin)
 		p0<-t(apply(rstan::extract(fit,"P0")[[1]],2,quantile,probs=c(.5,.025,.05,.95,.975)))
 		p1<-t(apply(rstan::extract(fit,"P1")[[1]],2,quantile,probs=c(.5,.025,.05,.95,.975)))
 		## create a list with parameter estimates plus full hmc object

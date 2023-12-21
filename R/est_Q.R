@@ -71,7 +71,7 @@ est_Q<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,model="genotype",ploidy=
                 ## diploid with known genotypes
 		dat<-list(L=dim(Gx)[2],N=dim(Gx)[1],G=Gx,P0=p0,P1=p1)
 		fit<-rstan::sampling(stanmodels$Q,data=dat,
-		     iter=n_iters,warmup=p_warmup,thin=n_thin)
+		     iter=n_iters,warmup=n_warmup,thin=n_thin)
 		Q<-rstan::extract(fit,"Q")[[1]]
 		Q11<-t(apply(Q[,,1],2,quantile,probs=c(.5,.05,.95)))
 		Q10<-t(apply(Q[,,2],2,quantile,probs=c(.5,.05,.95)))
@@ -84,7 +84,7 @@ est_Q<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,model="genotype",ploidy=
 		dat<-list(L=dim(Gx[[1]])[2],N=dim(Gx[[1]])[1],GL0=Gx[[1]],GL1=Gx[[2]],GL2=Gx[[3]]
 			  ,P0=p0,P1=p1)
 		fit<-rstan::sampling(stanmodels$Q_gl,data=dat,
-		     iter=n_iters,warmup=p_warmup,thin=n_thin)
+		     iter=n_iters,warmup=n_warmup,thin=n_thin)
 		Q<-rstan::extract(fit,"Q")[[1]]
 		Q11<-t(apply(Q[,,1],2,quantile,probs=c(.5,.05,.95)))
 		Q10<-t(apply(Q[,,2],2,quantile,probs=c(.5,.05,.95)))
@@ -96,7 +96,7 @@ est_Q<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,model="genotype",ploidy=
                 ## diploid with known ancestry
 		dat<-list(L=dim(Gx)[2],N=dim(Gx)[1],Z=Gx)
 		fit<-rstan::sampling(stanmodels$Q_z,data=dat,
-		     iter=n_iters,warmup=p_warmup,thin=n_thin)
+		     iter=n_iters,warmup=n_warmup,thin=n_thin)
 		Q<-rstan::extract(fit,"Q")[[1]]
 		Q11<-t(apply(Q[,,1],2,quantile,probs=c(.5,.05,.95)))
 		Q10<-t(apply(Q[,,2],2,quantile,probs=c(.5,.05,.95)))
@@ -108,7 +108,7 @@ est_Q<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,model="genotype",ploidy=
                 ## mixed ploidy with known genotypes
 		dat<-list(L=dim(Gx)[2],N=dim(Gx)[1],G=Gx,P0=p0,P1=p1,ploidy=pldat)
 		fit<-rstan::sampling(stanmodels$Q_mix,data=dat,
-		     iter=n_iters,warmup=p_warmup,thin=n_thin)
+		     iter=n_iters,warmup=n_warmup,thin=n_thin)
 		Q<-rstan::extract(fit,"Q")[[1]]
 		Q11<-t(apply(Q[,,1],2,quantile,probs=c(.5,.05,.95)))
 		Q10<-t(apply(Q[,,2],2,quantile,probs=c(.5,.05,.95)))
@@ -121,7 +121,7 @@ est_Q<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,model="genotype",ploidy=
 		dat<-list(L=dim(Gx[[1]])[2],N=dim(Gx[[1]])[1],GL0=Gx[[1]],GL1=Gx[[2]],GL2=Gx[[3]],
 			  P0=p0,P1=p1,pl=pldat)
 		fit<-rstan::sampling(stanmodels$Q_gl_mix,data=dat,
-		     iter=n_iters,warmup=p_warmup,thin=n_thin)
+		     iter=n_iters,warmup=n_warmup,thin=n_thin)
 		Q<-rstan::extract(fit,"Q")[[1]]
 		Q11<-t(apply(Q[,,1],2,quantile,probs=c(.5,.05,.95)))
 		Q10<-t(apply(Q[,,2],2,quantile,probs=c(.5,.05,.95)))
@@ -133,7 +133,7 @@ est_Q<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,model="genotype",ploidy=
                 ## mixed ploidy with known ancestry
 		dat<-list(L=dim(Gx)[2],N=dim(Gx)[1],Z=Gx,pl=pldat)
 		fit<-rstan::sampling(stanmodels$Q_z_mix,data=dat,
-		     iter=n_iters,warmup=p_warmup,thin=n_thin)
+		     iter=n_iters,warmup=n_warmup,thin=n_thin)
 		Q<-rstan::extract(fit,"Q")[[1]]
 		Q11<-t(apply(Q[,,1],2,quantile,probs=c(.5,.05,.95)))
 		Q10<-t(apply(Q[,,2],2,quantile,probs=c(.5,.05,.95)))

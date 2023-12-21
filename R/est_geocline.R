@@ -64,13 +64,13 @@ est_geocl<-function(G=NULL,P=NULL,Geo=NULL,Ids=NULL,model="genotype",ploidy="dip
 		} else if(model=="glik" & ploidy=="diploid"){
 			dat<-list(L=dim(G[[1]])[2],N=dim(G[[1]])[1],J=length(Geo),GL0=G[[1]],GL1=G[[2]],GL2=G[[3]],pids=Ids)
 			fit<-rstan::sampling(stanmodels$popp_gl,data=dat,
-		                iter=n_iters,warmup=p_warmup,thin=n_thin)
+		                iter=n_iters,warmup=n_warmup,thin=n_thin)
 			Px<-rstan::extract(fit,"P")[[1]]
 			P<-apply(Px,c(2,3),median) 
 		} else { ## glik and mixed
 			dat<-list(L=dim(G[[1]])[2],N=dim(G[[1]])[1],J=length(Geo),GL0=G[[1]],GL1=G[[2]],GL2=G[[3]],pids=Ids)
 			fit<-rstan::sampling(stanmodels$popp_gl,data=dat,
-		                iter=n_iters,warmup=p_warmup,thin=n_thin)
+		                iter=n_iters,warmup=n_warmup,thin=n_thin)
 			Px<-rstan::extract(fit,"P")[[1]]
 			P<-apply(Px,c(2,3),median) 
 		}
@@ -84,7 +84,7 @@ est_geocl<-function(G=NULL,P=NULL,Geo=NULL,Ids=NULL,model="genotype",ploidy="dip
 		        
 	dat<-list(L=dim(P)[2],J=dim(P)[1],P=log(P/(1-P)),geo=Geo)
 	fit<-rstan::sampling(stanmodels$geocline,data=dat,
-		iter=n_iters,warmup=p_warmup,thin=n_thin)
+		iter=n_iters,warmup=n_warmup,thin=n_thin)
 	w<-t(apply(rstan::extract(fit,"w")[[1]],2,quantile,probs=c(.5,.025,.05,.95,.975)))
 	mu<-quantile(rstan::extract(fit,"mu")[[1]],probs=c(.5,.025,.05,.95,.975))
 	sigma<-quantile(rstan::extract(fit,"sigma")[[1]],probs=c(.5,.025,.05,.95,.975))

@@ -23,8 +23,8 @@ sum2zero<-function (center=NULL, v=NULL, hmc=NULL, transform=TRUE, ci=0.95){
 
 	## use the hmc data
 	if(is.null(hmc)==FALSE){
-		cc<-rstan::extract(fit,"center")[[1]] ## dimensions: rows = HMC steps, cols = loci
-		cv<-rstan::extract(fit,"v")[[1]]
+		cc<-rstan::extract(hmc,"center")[[1]] ## dimensions: rows = HMC steps, cols = loci
+		cv<-rstan::extract(hmc,"v")[[1]]
 		if(transform==TRUE){
 			## transform the parameter values and impose sum-to-zero constraints
 			t_cv<-log10(cv)
@@ -35,9 +35,12 @@ sum2zero<-function (center=NULL, v=NULL, hmc=NULL, transform=TRUE, ci=0.95){
 			}
 			lq<-(1-ci)/2
 			uq<-1-lq
-			est_v<-apply(t_cv,2,quantile,probs=c(.5,lq,uq))
-			est_center<-apply(t_cc,2,quantile,probs=c(.5,lq,uq))
-			out<-list(center=est_center,v=est_v)
+			## undo transformation
+			cv<-10^t_cv
+			cc<-1/(1+exp(-t_cc))
+			est_v<-apply(cv,2,quantile,probs=c(.5,lq,uq))
+			est_center<-apply(cc,2,quantile,probs=c(.5,lq,uq))
+			out<-list(center=est_center,gradient=est_v)
 		} else{
 			## don't transform, center should have mean 0.5, gradien mean 1
 			for(i in 1:dim(t_cv)[1]){
@@ -48,7 +51,7 @@ sum2zero<-function (center=NULL, v=NULL, hmc=NULL, transform=TRUE, ci=0.95){
 			uq<-1-lq
 			est_v<-apply(cv,2,quantile,probs=c(.5,lq,uq))
 			est_center<-apply(cc,2,quantile,probs=c(.5,lq,uq))
-			out<-list(center=est_center,v=est_v)
+			out<-list(center=est_center,gradient=est_v)
 		}
 	} else {
 	## use the provide parameter estimates
@@ -64,7 +67,10 @@ sum2zero<-function (center=NULL, v=NULL, hmc=NULL, transform=TRUE, ci=0.95){
 			for(k in 1:length(mns_center)){
 				t_center[,k]<-t_center[,k]-mns_center[1]
 			}
-			out<-list(center=t_center,v=t_v)
+			## undo transformation
+			v<-10^t_v
+			center<-1/(1+exp(-t_center))
+			out<-list(center=center,gradient=v)
 		} else{
 		## don't transform, center should have mean 0.5, gradien mean 1	
 			mns_v<-apply(v,2,mean)
@@ -75,7 +81,7 @@ sum2zero<-function (center=NULL, v=NULL, hmc=NULL, transform=TRUE, ci=0.95){
 			for(k in 1:length(mns_center)){
 				center[,k]<-center[,k]-mns_center[1]+0.5
 			}
-
+			out<-list(center=center,gradient=v)
 		}
 
 	}

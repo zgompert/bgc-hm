@@ -21,6 +21,19 @@ library(bgchm)
 
 This is a working version of the software, but not all options have been implemented yet. I am actively developing this package and will post details on usage once I have a version with everything implemented and working (hopefully by the end of Nov. 2023).
 
+# Examples
+
+Fit genomic clines for an example data set with known genotypes. This data set comprises 51 ancestry-informative loci, 100 putative hybrids and 50 individuals represntative of each parental species. All loci are diploid. The data were simulated with dfuse using an underdominance model with xxx (the underdominance model is described in [Fierno et al. 2023](https://cshperspectives.cshlp.org/content/early/2023/09/21/cshperspect.a041434).
+```{R}
+## load the data set
+data(genotypes)
+## this includes three objects, GenHybrids, GenP0, and GenP1
+
+## estimate parental allele frequencies, uses default HMC settings
+p_out<-est_p(G0=GenP0,G1=GenP1,model="genotype",ploidy="diploid")
+
+```
+
 # Citations
 
 The general hierarchical Bayesian model used for Bayesidan genomic cline analysis was described here:

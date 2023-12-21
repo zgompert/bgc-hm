@@ -38,8 +38,8 @@ sum2zero<-function (center=NULL, v=NULL, hmc=NULL, transform=TRUE, ci=0.95){
 			## undo transformation
 			cv<-10^t_cv
 			cc<-1/(1+exp(-t_cc))
-			est_v<-apply(cv,2,quantile,probs=c(.5,lq,uq))
-			est_center<-apply(cc,2,quantile,probs=c(.5,lq,uq))
+			est_v<-t(apply(cv,2,quantile,probs=c(.5,lq,uq)))
+			est_center<-t(apply(cc,2,quantile,probs=c(.5,lq,uq)))
 			out<-list(center=est_center,gradient=est_v)
 		} else{
 			## don't transform, center should have mean 0.5, gradien mean 1
@@ -49,8 +49,8 @@ sum2zero<-function (center=NULL, v=NULL, hmc=NULL, transform=TRUE, ci=0.95){
 			}
 			lq<-(1-ci)/2
 			uq<-1-lq
-			est_v<-apply(cv,2,quantile,probs=c(.5,lq,uq))
-			est_center<-apply(cc,2,quantile,probs=c(.5,lq,uq))
+			est_v<-t(apply(cv,2,quantile,probs=c(.5,lq,uq)))
+			est_center<-t(apply(cc,2,quantile,probs=c(.5,lq,uq)))
 			out<-list(center=est_center,gradient=est_v)
 		}
 	} else {

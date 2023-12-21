@@ -36,10 +36,39 @@ p_out<-est_p(G0=GenP0,G1=GenP1,model="genotype",ploidy="diploid")
 ## and uses point estimates (posterior medians) of allele frequencies
 h_out<-est_hi(Gx=GenHybrids,p0=p_out$p0[,1],p1=p_out$p1[,1],model="genotype",ploidy="diploid")
 
+## plot hybrid index estimates with 90% equal-tail probability intervals
+## sorted by hybid index, just a nice way to visualize what we have
+## in this example few hybrids have intermediate hybrid indexes 
+plot(sort(h_out$hi[,1]),ylim=c(0,1),pch=19,xlab="Individual (sorted by HI)",ylab="Hybrid index (HI)")
+segments(1:100,h_out$hi[order(h_out$hi[,1]),3],1:100,h_out$hi[order(h_out$hi[,1]),4])
+
 ## fit a hierarchical genomic cline model for all 51 loci using the estimated
 ## hybrid indexes and parental allele frequencies (point estimates)
-## this too uses default HMC settings
-gc_out<-est_genocl(Gx=GenHybrids,p0=p_out$p0[,1],p1=p_out$p1[,1],H=h_out$hi[,1],model="genotype",ploidy="diploid",hier=TRUE)
+## use 4000 iterations and 2000 warmup to make sure we get a nice effective sample size
+gc_out<-est_genocl(Gx=GenHybrids,p0=p_out$p0[,1],p1=p_out$p1[,1],H=h_out$hi[,1],model="genotype",ploidy="diploid",hier=TRUE,n_iters=4000)
+
+## how variable is introgression among loci, lets look at the cline SDs
+## these are related to the degree of coupling among loci overall
+gc_out$SDc
+gc_out$SDv
+
+## impose sum-to-zero constraint on log/logit scale
+## not totally necessary, but think this is mostly a good idea
+sz_out<-sum2zero(hmc=gc_out$gencline_hmc,transform=TRUE,ci=0.90)
+
+## plot genomic clines for the 51 loci, first without the sum-to-zero constraint
+## then with it... these differ more for some data sets than others
+gencline_plot(center=gc_out$center[,1],v=gc_out$gradient,pdf=FALSE)
+gencline_plot(center=sz_out$center[,1],v=sz_out$v,pdf=FALSE)
+
+## summarize loci with credible deviations from genome-averge gradients, here the focus is
+## specifically on steep clines indicative of loci introgressing less than the average
+which(sz_out$v[,2] > 1) ## index for loci with credibly steep clines
+sum(sz_out$v[,2] > 1) ## number of loci with credibly steep clines
+
+## last, lets look at interspecific ancestry for the same data set, this can
+## be especially informative about the types of hybrids present
+q_out<-est_Q(Gx=GenHybrids,p0=p_out$p0[,1],p1=p_out$p1[,1],model="genotype",ploidy="diploid")
 
 ```
 

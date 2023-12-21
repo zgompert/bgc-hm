@@ -19,7 +19,7 @@ library(bgchm)
 
 # Usage
 
-This is a working version of the software, but not all options have been implemented yet. I am actively developing this package and will post details on usage once I have a version with everything implemented and working (hopefully by the end of Nov. 2023).
+This software now works, but I am still in the process of writing the examples and testing everything. Thus, for the moment use this with caution (and maybe shoot me an email if you use this before I remove this message).
 
 # Examples
 
@@ -59,7 +59,7 @@ sz_out<-sum2zero(hmc=gc_out$gencline_hmc,transform=TRUE,ci=0.90)
 ## plot genomic clines for the 51 loci, first without the sum-to-zero constraint
 ## then with it... these differ more for some data sets than others
 gencline_plot(center=gc_out$center[,1],v=gc_out$gradient,pdf=FALSE)
-gencline_plot(center=sz_out$center[,1],v=sz_out$v,pdf=FALSE)
+gencline_plot(center=sz_out$center[,1],v=sz_out$gradient,pdf=FALSE)
 
 ## summarize loci with credible deviations from genome-averge gradients, here the focus is
 ## specifically on steep clines indicative of loci introgressing less than the average
@@ -70,6 +70,10 @@ sum(sz_out$v[,2] > 1) ## number of loci with credibly steep clines
 ## be especially informative about the types of hybrids present
 q_out<-est_Q(Gx=GenHybrids,p0=p_out$p0[,1],p1=p_out$p1[,1],model="genotype",ploidy="diploid")
 
+## plot the results
+tri_plot(hi=q_out$hi[,1],Q10=q_out$Q10[,1],pdf=FALSE,pch=19)
+## note that some individuals appear to be likely backcrosses (close to the outer lines of the triangles)
+## but the inidividals with intermediate hybrid indexes are clearly not F1s but rather late generation hybrids
 ```
 
 # Citations

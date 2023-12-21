@@ -32,6 +32,15 @@ data(genotypes)
 ## estimate parental allele frequencies, uses default HMC settings
 p_out<-est_p(G0=GenP0,G1=GenP1,model="genotype",ploidy="diploid")
 
+## estimate hybrid indexes, uses default HMC settings
+## and uses point estimates (posterior medians) of allele frequencies
+h_out<-est_hi(Gx=GenHybrids,p0=p_out$p0[,1],p1=p_out$p1[,1],model="genotype",ploidy="diploid")
+
+## fit a hierarchical genomic cline model for all 51 loci using the estimated
+## hybrid indexes and parental allele frequencies (point estimates)
+## this too uses default HMC settings
+gc_out<-est_genocl(Gx=GenHybrids,p0=p_out$p0[,1],p1=p_out$p1[,1],H=h_out$hi[,1],model="genotype",ploidy="diploid",hier=TRUE)
+
 ```
 
 # Citations

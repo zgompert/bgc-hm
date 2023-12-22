@@ -143,21 +143,15 @@ rset<-sample(1:L,1000,replace=FALSE)
 
 ## estimate hybrid indexes, uses default HMC settings
 ## and estimates allele frequencies on the fly 
-h_out<-est_hi(Gx=G200kHybrids,G0=G200kP0,G1=G200kP1,model="genotype",ploidy="diploid")
+h_out<-est_hi(Gx=G200kHybrids[,rset],G0=G200kP0[,rset],G1=G200kP1[,rset],model="genotype",ploidy="diploid")
 ## let's write the hybrid index estimates to a text file so we can easily access them later
 write.table(file="h_est.txt",h_out,row.names=FALSE,quote=FALSE)
-
-## plot hybrid index estimates with 90% equal-tail probability intervals
-## sorted by hybid index, just a nice way to visualize what we have
-## in this example XXXX
-plot(sort(h_out$hi[,1]),ylim=c(0,1),pch=19,xlab="Individual (sorted by HI)",ylab="Hybrid index (HI)")
-segments(1:100,h_out$hi[order(h_out$hi[,1]),3],1:100,h_out$hi[order(h_out$hi[,1]),4])
 
 ## fit a hierarchical genomic cline model for subset of loci using the estimated
 ## hybrid indexes, estimate parental allele frequencies on the fly
 ## use 4000 iterations and 2000 warmup to make sure we get a nice effective sample size
 ## our main goal here is to estimate the cline SDs
-gc_out<-est_genocl(Gx=GlikHybrids,p0=p_out$p0[,1],p1=p_out$p1[,1],H=h_out$hi[,1],model="glik",ploidy="diploid",hier=TRUE,n_iters=4000)
+gc_out<-est_genocl(Gx=GlikHybrids[,rset],G0=G200kP0[,rset],G1=G200kP1[,rset],H=h_out$hi[,1],model="genotype",ploidy="diploid",hier=TRUE,n_iters=4000)
 
 ## here are the cline SDs
 ## we will need these for the next step

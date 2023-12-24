@@ -145,7 +145,7 @@ rset<-sample(1:L,1000,replace=FALSE)
 ## and estimates allele frequencies on the fly 
 h_out<-est_hi(Gx=G200kHybrids[,rset],G0=G200kP0[,rset],G1=G200kP1[,rset],model="genotype",ploidy="diploid")
 ## let's write the hybrid index estimates to a text file so we can easily access them later
-write.table(file="h_est.txt",h_out,row.names=FALSE,quote=FALSE)
+write.table(file="h_est.txt",h_out$hi,row.names=FALSE,quote=FALSE)
 
 ## fit a hierarchical genomic cline model for subset of loci using the estimated
 ## hybrid indexes, estimate parental allele frequencies on the fly

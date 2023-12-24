@@ -151,12 +151,16 @@ write.table(file="h_est.txt",h_out,row.names=FALSE,quote=FALSE)
 ## hybrid indexes, estimate parental allele frequencies on the fly
 ## use 4000 iterations and 2000 warmup to make sure we get a nice effective sample size
 ## our main goal here is to estimate the cline SDs
-gc_out<-est_genocl(Gx=GlikHybrids[,rset],G0=G200kP0[,rset],G1=G200kP1[,rset],H=h_out$hi[,1],model="genotype",ploidy="diploid",hier=TRUE,n_iters=4000)
+gc_out<-est_genocl(Gx=G200kHybrids[,rset],G0=G200kP0[,rset],G1=G200kP1[,rset],H=h_out$hi[,1],model="genotype",ploidy="diploid",hier=TRUE,n_iters=4000)
 
 ## here are the cline SDs
 ## we will need these for the next step
 gc_out$SDc
+#      50%        5%       95% 
+#0.2027722 0.1853855 0.2202991 
 gc_out$SDv
+#      50%        5%       95% 
+#0.2717172 0.2629907 0.2803867
 ```
 
 Step 2: Estimate clines for all of the loci in parallel
@@ -196,8 +200,8 @@ h<-read.table("h_est.txt",header=TRUE)
 ## enter point estimates of cline standard deviations inferred from the subset of loci
 ## these are the actual values I estimated, if you run this example yours will likely be
 ## similar but not identical
-sdc<-0.3
-sdv<-0.2
+sdc<-0.20
+sdv<-0.27
 
 ## selection the appropriate subset of SNPs
 ## using in this case 10,000 SNP batches and

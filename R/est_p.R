@@ -35,8 +35,9 @@ est_p<-function(G0=NULL,G1=NULL,model="genotype",ploidy="diploid",pldat=NULL,
         ## determine number of warmup iterations
         n_warmup<-floor(p_warmup * n_iters)
 
-
 	if(model=="genotype" & ploidy=="diploid"){
+		G0<-as.matrix(G0)
+		G1<-as.matrix(G1)
 		dat<-list(L=dim(G0)[2],N0=dim(G0)[1],N1=dim(G1)[1],G0=G0,G1=G1)
 		fit<-rstan::sampling(stanmodels$p,data=dat,
 			iter=n_iters,warmup=n_warmup,thin=n_thin)
@@ -47,6 +48,10 @@ est_p<-function(G0=NULL,G1=NULL,model="genotype",ploidy="diploid",pldat=NULL,
 
 		return(pout)
 	} else if(model=="glik" & ploidy=="diploid"){
+		for(k in 1:3){
+			G0[[k]]<-as.matrix(G0[[k]])
+			G1[[k]]<-as.matrix(G1[[k]])
+		}
 		dat<-list(L=dim(G0[[1]])[2],N0=dim(G0[[1]])[1],N1=dim(G1[[1]])[1],
 		GL00=G0[[1]],GL10=G1[[1]],GL01=G0[[2]],GL11=G1[[2]],GL02=G0[[3]],GL12=G1[[3]])
 		fit<-rstan::sampling(stanmodels$p_gl,data=dat,
@@ -57,8 +62,12 @@ est_p<-function(G0=NULL,G1=NULL,model="genotype",ploidy="diploid",pldat=NULL,
 		pout<-list(p0=p0,p1=p1,p_hmc=fit)
 	
 	} else if(model=="genotype" & ploidy=="mixed"){
+		G0<-as.matrix(G0)
+		G1<-as.matrix(G1)
+		pldat[[2]]<-as.matrix(pldat[[2]])
+		pldat[[3]]<-as.matrix(pldat[[3]])
 		dat<-list(L=dim(G0)[2],N0=dim(G0)[1],N1=dim(G1)[1],G0=G0,G1=G1,
-		ploidy=pldat[[2]],ploidy1=pldat[[3]])
+		ploidy0=pldat[[2]],ploidy1=pldat[[3]])
 		fit<-rstan::sampling(stanmodels$p_mix,data=dat,
 			iter=n_iters,warmup=n_warmup,thin=n_thin)
 		p0<-t(apply(rstan::extract(fit,"P0")[[1]],2,quantile,probs=c(.5,.025,.05,.95,.975)))
@@ -67,9 +76,15 @@ est_p<-function(G0=NULL,G1=NULL,model="genotype",ploidy="diploid",pldat=NULL,
 		pout<-list(p0=p0,p1=p1,p_hmc=fit)
 	
 	} else if(model=="glik" & ploidy=="mixed"){
+		for(k in 1:3){
+			G0[[k]]<-as.matrix(G0[[k]])
+			G1[[k]]<-as.matrix(G1[[k]])
+		}
+		pldat[[2]]<-as.matrix(pldat[[2]])
+		pldat[[3]]<-as.matrix(pldat[[3]])
 		dat<-list(L=dim(G0[[1]])[2],N0=dim(G0[[1]])[1],N1=dim(G1[[1]])[1],
 		GL00=G0[[1]],GL10=G1[[1]],GL01=G0[[2]],GL11=G1[[2]],GL02=G0[[3]],GL12=G1[[3]],
-		ploidy=pldat[[2]],ploidy1=pldat[[3]])
+		ploidy0=pldat[[2]],ploidy1=pldat[[3]])
 		fit<-rstan::sampling(stanmodels$p_gl_mix,data=dat,
 			iter=n_iters,warmup=n_warmup,thin=n_thin)
 		p0<-t(apply(rstan::extract(fit,"P0")[[1]],2,quantile,probs=c(.5,.025,.05,.95,.975)))

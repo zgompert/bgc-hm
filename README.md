@@ -260,7 +260,7 @@ cf<-list.files(pattern="clinesOut")
 
 ## load the first rda file and create our storage objects
 load(cf[[1]])
-Lt<-dim(G200Khybrids)[1] ## number of loci
+Lt<-dim(G200kHybrids)[2] ## number of loci
 ## object for gradient = v and center = c
 ## one row per locus, 3 columns for point estimate and CIs
 v_est<-matrix(NA,nrow=Lt,ncol=3)

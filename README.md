@@ -282,6 +282,39 @@ save(list=ls(),file="combinedClines.rda")
 ## now impose s2z constraints, make plots, etc.
 ```
 
+**Fit geographic clines for example data set of allele frequencies**. This data set comprises allele frequencies for 51 diploid loci from 110 demes. The data were simulated with m = 0.1 between neighboring demes and 10 loci impacting hybrid fitness via underdominance.
+```R
+## load the data set
+data(pfreqs)
+## this includes one object, a matrix P with allele frequencies
+## 110 rows = demes, 51 columns = loci
+
+## focus on demes that comprise the hybrid zone proper
+## that is where there is a transition in allele frequency
+## the function fits a linear function for the logit allele 
+## frequencies in this region
+Pbar<-apply(P,1,mean) ## mean allele frequencies
+## identify the first and last deme with mean allele frequency 
+## between 0.1 and 0.9 (all loci are fixed for alternative alleles)
+lb<-min(which(Pbar > .1 & Pbar < .9)) 
+ub<-max(which(Pbar > .1 & Pbar < .9))
+
+## create vector of demes to include
+x<-lb:ub
+
+## use standardized deme numbers as geographic coordinates
+geo<-(x-mean(x))/sd(x)
+
+## fit the geographic cline model
+o<-est_geocl(P=P[lb:ub,],Geo=geo,prec=0.01)
+
+## plot cline width, on the original (not logit) scale
+## point estimate and 90% equal-tail probability intervals
+plot(o$w[,1],ylim=c(0,20),pch=19,xlab="Locus number",ylab="Cline width")
+segments(1:51,o$w[,3],1:51,o$w[,4])
+## not low width = narrower cline
+```
+
 # Citations
 
 The general hierarchical Bayesian model used for Bayesidan genomic cline analysis was described here:

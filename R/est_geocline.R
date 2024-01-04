@@ -8,7 +8,10 @@
 #' @param model for genetic data, either 'genotype' for known gentoypes or 'glik' for genotype likelihoods.
 #' @param ploidy specifies ploidy, either all 'diploid' or 'mixed' for diploid and haploid loci or individuals.
 #' @param pldat matrix or list of matrixes of ploidy data for mixed ploidy (rows = individuals, columns = loci) indicating ploidy (2 = diploid, 1 = haploid).
+#' @param hier Boolean, fit hierarchical model (TRUE) that estimates cline slope SDs or non-hierarchical model for one locus with (relatively) uniformative priors (FALSE).
 #' @param prec approximate precision for known (or estimated) allele frequencies, which should be set to about 1/2N (use the average 2N across populations). Do not set this to 0, which can result in errors when working with the log of the allele frequencies.
+#' @param y_lb minimum value of logit allele frequencies to include in the model (the default of -2 is a good choice)
+#' @param y_ub minimum value of logit allele frequencies to include in the model (the default of 2 is a good choice)
 #' @param n_chains number of HMC chains for posterior inference.
 #' @param n_iters A positive integer specifying the number of iterations for each chain (including warmup), default is 2000.
 #' @param p_warmup proportion (between 0 and 1) of n_iters to use as warmup (i.e., burnin), default is 0.5.
@@ -21,9 +24,9 @@
 #' Ploidy data are only required for the mixed ploidy data genotypic data (they are not used if allele frequencies are provided directly). In this case, there should be one matrix for the hybrids or a list of matrixes for the hybrids (1st matrix) and each parent (2nd and 3rd matrixes, with parent 0 first). The latter is required for the genotype or genotype likelihood models if parental allele frequencies are not provided. The matrixes indicate whether each locus (column) for each individual (row) is diploid (2) or haploid (1).
 #' @details
 #' The model assumes oraganisms have been sampled from populations (demes) along a 1D transect through a hybird zone. Various approaches exist for approximating a 2D sampling scheme in 1D and can be used to transform coordinates to a single dimension. No specific coordinate units are expected, and coordinates are always centered (given a mean of 0) prior to analysis. If population allele frequencies are given directly, populations are assumed to be in the same order in the Geo vector and allele frequency matrix. If genetotypic data are provided, and additional object, Ids, is required that indicates which population (numbered 1 to the number of populations and following the order in Geo) each individual belongs to. 
-#' @details The model works with the log of the allele frequencies. Consequently, allele frequencies of 0 are not allowed (these will cause an error). The value specified by prec will be added to allele frequencies of 0 and subtracted from allele frequencies of 1. This prevents problems with taking logs and also is meant to reflect that fact that one cannot be certain an allele is not present in a population. We recommend setting prec to 1/2N, where N is the mean (or median) sample size acorss demes.
+#' @details The model works with the logit of the allele frequencies. Consequently, allele frequencies of 0 are not allowed (these will cause an error). The value specified by prec will be added to allele frequencies of 0 and subtracted from allele frequencies of 1. This prevents problems with taking logs and also is meant to reflect that fact that one cannot be certain an allele is not present in a population. We recommend setting prec to 1/2N, where N is the mean (or median) sample size acorss demes. Single and multilocus clines should be well approximated by a linear function for the logit allele frequencies near the center of the hybrid zone; this is the reason for only analyzing populations with intermediate allele frequencies (logit p betwen y_lb and y_ub, -2 and 2 by default, or p of about 0.11 to 0.88)
 #'
-#' @return A list of parameter estimates and full HMC results from stan. Estimates are provided for the cline width on the natural scale for each locus (w) and the mean (mu) and standard deviation (sigma) for cline widths on the log scale. The stan object additionally includes the slope and center (cent) for each cline on the log scale. Parameter estimates are provided as a point estimate (median of the posterior) and 95% equal-tail probability intervals (2.5th and 97.5th quantiles of the posterior distribution). These are provided as a vector or matrix depending on the dimensionality of the parameter. The full HMC output from rstan is provided as the final element in the list. This can be used for HMC diagnostics and to extract other model outputs not provided by default. 
+#' @return A list of parameter estimates and full HMC results from stan. Estimates are provided for the cline width on the natural scale for each locus (w), the slope on the logit scale (slope), the cline center based on the centered geographic coordinates (center), and the mean (mu) and standard deviation (sigma) for cline widths on the logit scale (the latter two only apply to the hierarchical model0. The stan object additionally includes the slope and center (cent) for each cline on the log scale. Parameter estimates are provided as a point estimate (median of the posterior) and 95% equal-tail probability intervals (2.5th and 97.5th quantiles of the posterior distribution). These are provided as a vector or matrix depending on the dimensionality of the parameter. The full HMC output from rstan is provided as the final element in the list. This can be used for HMC diagnostics and to extract other model outputs not provided by default. 
 #'
 #' @seealso 'rstan::stan' for details on HMC with stan and the rstan HMC output object.
 #'
@@ -31,8 +34,8 @@
 #' Gompert Z, et al. 2024. Bayesian hybrid zone analyses with Hamiltonian Monte Carlo in R. Manuscript in preparation
 
 #' @export
-est_geocl<-function(G=NULL,P=NULL,Geo=NULL,Ids=NULL,model="genotype",ploidy="diploid",pldat=NULL,prec=0.001,
-	n_chains=4,n_iters=2000,p_warmup=0.5,n_thin=1,n_cores=NULL){
+est_geocl<-function(G=NULL,P=NULL,Geo=NULL,Ids=NULL,model="genotype",ploidy="diploid",pldat=NULL,hier=TRUE,prec=0.001,
+	y_lb=-2,y_ub=2,n_chains=4,n_iters=2000,p_warmup=0.5,n_thin=1,n_cores=NULL){
 
         ## get or set number of cores for HMC
         if(is.null(n_cores)){
@@ -81,14 +84,29 @@ est_geocl<-function(G=NULL,P=NULL,Geo=NULL,Ids=NULL,model="genotype",ploidy="dip
     	
 	## center geography
 	Geo<-Geo-mean(Geo)
-		        
-	dat<-list(L=dim(P)[2],J=dim(P)[1],P=log(P/(1-P)),geo=Geo)
-	fit<-rstan::sampling(stanmodels$geocline,data=dat,
-		iter=n_iters,warmup=n_warmup,thin=n_thin)
-	w<-t(apply(rstan::extract(fit,"w")[[1]],2,quantile,probs=c(.5,.025,.05,.95,.975)))
-	mu<-quantile(rstan::extract(fit,"mu")[[1]],probs=c(.5,.025,.05,.95,.975))
-	sigma<-quantile(rstan::extract(fit,"sigma")[[1]],probs=c(.5,.025,.05,.95,.975))
-	## create a list with parameter estimates plus full hmc object
-	geoout<-list(w=w,mu=mu,sigma=sigma,geo_hmc=fit)
+	Y<-log(P/(1-P))
+	if(hier==TRUE){
+		dat<-list(L=dim(P)[2],J=dim(P)[1],Y=as.matrix(log(P/(1-P))),geo=Geo,lb=y_lb,ub=y_ub)
+		fit<-rstan::sampling(stanmodels$geocline,data=dat,
+			iter=n_iters,warmup=n_warmup,thin=n_thin)
+		w<-t(apply(rstan::extract(fit,"w")[[1]],2,quantile,probs=c(.5,.025,.05,.95,.975)))
+		cent<-t(apply(rstan::extract(fit,"cent")[[1]],2,quantile,probs=c(.5,.025,.05,.95,.975)))
+		slope<-t(apply(rstan::extract(fit,"slope")[[1]],2,quantile,probs=c(.5,.025,.05,.95,.975)))
+		mu<-quantile(rstan::extract(fit,"mu")[[1]],probs=c(.5,.025,.05,.95,.975))
+		sigma<-quantile(rstan::extract(fit,"sigma")[[1]],probs=c(.5,.025,.05,.95,.975))
+		## create a list with parameter estimates plus full hmc object
+		geoout<-list(w=w,cent=cent,slope=slope,mu=mu,sigma=sigma,geo_hmc=fit)
+	} else {
+		P<-as.vector(P)
+		dat<-list(J=length(P),Y=(log(P/(1-P))),geo=Geo,lb=y_lb,ub=y_ub)
+		fit<-rstan::sampling(stanmodels$geocline_one,data=dat,
+			iter=n_iters,warmup=n_warmup,thin=n_thin)
+		w<-quantile(rstan::extract(fit,"w")[[1]],2,probs=c(.5,.025,.05,.95,.975))
+		cent<-quantile(rstan::extract(fit,"cent")[[1]],2,probs=c(.5,.025,.05,.95,.975))
+		slope<-quantile(rstan::extract(fit,"slope")[[1]],2,probs=c(.5,.025,.05,.95,.975))
+		## create a list with parameter estimates plus full hmc object
+		geoout<-list(w=w,cent=cent,slope=slope,geo_hmc=fit)
+
+	}
 	return(geoout)
 }

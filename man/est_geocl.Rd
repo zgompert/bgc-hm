@@ -12,10 +12,10 @@ est_geocl(
   model = "genotype",
   ploidy = "diploid",
   pldat = NULL,
-  prec = 0.001,
   hier = TRUE,
-  SDc = NULL,
-  SDv = NULL,
+  prec = 0.001,
+  y_lb = -2,
+  y_ub = 2,
   n_chains = 4,
   n_iters = 2000,
   p_warmup = 0.5,
@@ -32,13 +32,19 @@ est_geocl(
 
 \item{Ids}{indexes designating which population each individual belongs to. This should be provided as a single vector (length equal to the number of sampled individuals). The indexes should range from 1 to the number of populations.}
 
-\item{model}{for genetic data, either 'genotype' for known gentoypes, 'glik' for genotype likelihoods, or 'ancestry' for known ancestry.}
+\item{model}{for genetic data, either 'genotype' for known gentoypes or 'glik' for genotype likelihoods.}
 
 \item{ploidy}{specifies ploidy, either all 'diploid' or 'mixed' for diploid and haploid loci or individuals.}
 
 \item{pldat}{matrix or list of matrixes of ploidy data for mixed ploidy (rows = individuals, columns = loci) indicating ploidy (2 = diploid, 1 = haploid).}
 
+\item{hier}{Boolean, fit hierarchical model (TRUE) that estimates cline slope SDs or non-hierarchical model for one locus with (relatively) uniformative priors (FALSE).}
+
 \item{prec}{approximate precision for known (or estimated) allele frequencies, which should be set to about 1/2N (use the average 2N across populations). Do not set this to 0, which can result in errors when working with the log of the allele frequencies.}
+
+\item{y_lb}{minimum value of logit allele frequencies to include in the model (the default of -2 is a good choice)}
+
+\item{y_ub}{minimum value of logit allele frequencies to include in the model (the default of 2 is a good choice)}
 
 \item{n_chains}{number of HMC chains for posterior inference.}
 
@@ -51,19 +57,19 @@ est_geocl(
 \item{n_cores}{number of cores to use for HMC, leave as NULL to automatically detect the number of cores present (no more than n_chains cores can be used even if available).}
 }
 \value{
-A list of parameter estimates and full HMC results from stan. Estimates are provided for the cline width on the natural scale for each locus (w) and the mean (mu) and standard deviation (sigma) for cline widths on the log scale. The stan object additionally includes the slope and center (cent) for each cline on the log scale. Parameter estimates are provided as a point estimate (median of the posterior) and 95\% equal-tail probability intervals (2.5th and 97.5th quantiles of the posterior distribution). These are provided as a vector or matrix depending on the dimensionality of the parameter. The full HMC output from rstan is provided as the final element in the list. This can be used for HMC diagnostics and to extract other model outputs not provided by default.
+A list of parameter estimates and full HMC results from stan. Estimates are provided for the cline width on the natural scale for each locus (w), the slope on the logit scale (slope), the cline center based on the centered geographic coordinates (center), and the mean (mu) and standard deviation (sigma) for cline widths on the logit scale (the latter two only apply to the hierarchical model0. The stan object additionally includes the slope and center (cent) for each cline on the log scale. Parameter estimates are provided as a point estimate (median of the posterior) and 95\% equal-tail probability intervals (2.5th and 97.5th quantiles of the posterior distribution). These are provided as a vector or matrix depending on the dimensionality of the parameter. The full HMC output from rstan is provided as the final element in the list. This can be used for HMC diagnostics and to extract other model outputs not provided by default.
 }
 \description{
 Uses Hamiltonian Monte Carlo (HMC) for Bayesian inference of geographic clines from genetic data.
 }
 \details{
-Geographic clines are estimated from population (deme) allele frequencies. This is done using a linear model for the log of the allele frequencies (a sigmoid cline on the natural scale becomes linear on the log scale). Users can provide allele frequency estiamtes of the allele frequencies can be estimate from genotypic data. In the latter case, allele frequencies are first estimated based on known genotypes (model = 'genotype') or genotype likelihoods (model = 'glik'). Genotypes should be encoded as 0 (homozygote), 1 (heterozygote) and 2 (alternative homozygote). No specific polarization (e.g., minor allele, reference allele, etc.) of 0 vs 2 is required. For haploid loci, you can use 0 and 1 or 0 and 2. Genotype likelihoods should be on their natural scale (not phred scaled) and the values for each locus for an individual should sum to 1. The data should be provided as a list of three matrixes, with the matrixes giving the likelihoods for genotypes 0, 1 and 2 respectively. Thus, each matrix will have one row per individual and one column per locus. For haploid loci with genotype likelihoods, you must use the 0 and 2 matrixes to store the likelihoods of the two possible states. If provided directly, allele frequencies should be given as a matrix, with one column per locus (assumes bi-allelic SNPs or the equivalent) and one row per population (deme).
+Geographic clines are estimated from population (deme) allele frequencies. This is done using a linear model for the logit of the allele frequencies (a sigmoid cline on the natural scale becomes linear on the logit scale). Users can provide allele frequency estiamtes or the allele frequencies can be estimate from genotypic data. In the latter case, allele frequencies are first estimated based on known genotypes (model = 'genotype') or genotype likelihoods (model = 'glik'). Genotypes should be encoded as 0 (homozygote), 1 (heterozygote) and 2 (alternative homozygote). No specific polarization (e.g., minor allele, reference allele, etc.) of 0 vs 2 is required. For haploid loci, you can use 0 and 1 or 0 and 2. Genotype likelihoods should be on their natural scale (not phred scaled) and the values for each locus for an individual should sum to 1. The data should be provided as a list of three matrixes, with the matrixes giving the likelihoods for genotypes 0, 1 and 2 respectively. Thus, each matrix will have one row per individual and one column per locus. For haploid loci with genotype likelihoods, you must use the 0 and 2 matrixes to store the likelihoods of the two possible states. If provided directly, allele frequencies should be given as a matrix, with one column per locus (assumes bi-allelic SNPs or the equivalent) and one row per population (deme).
 
 Ploidy data are only required for the mixed ploidy data genotypic data (they are not used if allele frequencies are provided directly). In this case, there should be one matrix for the hybrids or a list of matrixes for the hybrids (1st matrix) and each parent (2nd and 3rd matrixes, with parent 0 first). The latter is required for the genotype or genotype likelihood models if parental allele frequencies are not provided. The matrixes indicate whether each locus (column) for each individual (row) is diploid (2) or haploid (1).
 
 The model assumes oraganisms have been sampled from populations (demes) along a 1D transect through a hybird zone. Various approaches exist for approximating a 2D sampling scheme in 1D and can be used to transform coordinates to a single dimension. No specific coordinate units are expected, and coordinates are always centered (given a mean of 0) prior to analysis. If population allele frequencies are given directly, populations are assumed to be in the same order in the Geo vector and allele frequency matrix. If genetotypic data are provided, and additional object, Ids, is required that indicates which population (numbered 1 to the number of populations and following the order in Geo) each individual belongs to.
 
-The model works with the log of the allele frequencies. Consequently, allele frequencies of 0 are not allowed (these will cause an error). The value specified by prec will be added to allele frequencies of 0 and subtracted from allele frequencies of 1. This prevents problems with taking logs and also is meant to reflect that fact that one cannot be certain an allele is not present in a population. We recommend setting prec to 1/2N, where N is the mean (or median) sample size acorss demes.
+The model works with the logit of the allele frequencies. Consequently, allele frequencies of 0 are not allowed (these will cause an error). The value specified by prec will be added to allele frequencies of 0 and subtracted from allele frequencies of 1. This prevents problems with taking logs and also is meant to reflect that fact that one cannot be certain an allele is not present in a population. We recommend setting prec to 1/2N, where N is the mean (or median) sample size acorss demes. Single and multilocus clines should be well approximated by a linear function for the logit allele frequencies near the center of the hybrid zone; this is the reason for only analyzing populations with intermediate allele frequencies (logit p betwen y_lb and y_ub, -2 and 2 by default, or p of about 0.11 to 0.88)
 }
 \references{
 Gompert Z, et al. 2024. Bayesian hybrid zone analyses with Hamiltonian Monte Carlo in R. Manuscript in preparation

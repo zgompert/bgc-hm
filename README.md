@@ -289,30 +289,23 @@ data(pfreqs)
 ## this includes one object, a matrix P with allele frequencies
 ## 110 rows = demes, 51 columns = loci
 
-## focus on demes that comprise the hybrid zone proper
-## that is where there is a transition in allele frequency
-## the function fits a linear function for the logit allele 
-## frequencies in this region
-Pbar<-apply(P,1,mean) ## mean allele frequencies
-## identify the first and last deme with mean allele frequency 
-## between 0.1 and 0.9 (all loci are fixed for alternative alleles)
-lb<-min(which(Pbar > .1 & Pbar < .9)) 
-ub<-max(which(Pbar > .1 & Pbar < .9))
-
-## create vector of demes to include
-x<-lb:ub
-
 ## use standardized deme numbers as geographic coordinates
+x<-1:110
 geo<-(x-mean(x))/sd(x)
 
 ## fit the geographic cline model
-o<-est_geocl(P=P[lb:ub,],Geo=geo,prec=0.01)
+o<-est_geocl(P=P,Geo=geo,prec=0.01,y_lb=-2,y_ub=2,hier=TRUE,n_iters=5000)
 
-## plot cline width, on the original (not logit) scale
-## point estimate and 90% equal-tail probability intervals
-plot(o$w[,1],ylim=c(0,20),pch=19,xlab="Locus number",ylab="Cline width")
-segments(1:51,o$w[,3],1:51,o$w[,4])
-## not low width = narrower cline
+## plot clines on logit scale, which should be linear
+plot(geo,o$cent[1,1] + o$slope[1,1] * geo,type='l',ylim=c(-15,15),ylab="Logit allele frequency",xlab="Deme number",
+	axes=FALSE)
+axis(1,at=geo[seq(5,110,5)],x[seq(5,110,5)])
+axis(2)
+box()
+for(i in 2:51){
+	lines(geo,o$cent[i,1] + o$slope[i,1] * geo)
+}
+
 ```
 
 # Citations

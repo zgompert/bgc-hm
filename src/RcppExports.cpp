@@ -37,6 +37,7 @@ RcppExport SEXP _rcpp_module_boot_stan_fit4gencline_sdk_z_mix_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4gencline_z_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4gencline_z_mix_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4geocline_mod();
+RcppExport SEXP _rcpp_module_boot_stan_fit4geocline_one_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4hi_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4hi_gl_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4hi_gl_mix_mod();
@@ -76,6 +77,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_rcpp_module_boot_stan_fit4gencline_z_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4gencline_z_mod, 0},
     {"_rcpp_module_boot_stan_fit4gencline_z_mix_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4gencline_z_mix_mod, 0},
     {"_rcpp_module_boot_stan_fit4geocline_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4geocline_mod, 0},
+    {"_rcpp_module_boot_stan_fit4geocline_one_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4geocline_one_mod, 0},
     {"_rcpp_module_boot_stan_fit4hi_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4hi_mod, 0},
     {"_rcpp_module_boot_stan_fit4hi_gl_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4hi_gl_mod, 0},
     {"_rcpp_module_boot_stan_fit4hi_gl_mix_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4hi_gl_mix_mod, 0},

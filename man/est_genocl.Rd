@@ -17,6 +17,7 @@ est_genocl(
   hier = TRUE,
   SDc = NULL,
   SDv = NULL,
+  estMu = FALSE,
   n_chains = 4,
   n_iters = 2000,
   p_warmup = 0.5,
@@ -49,6 +50,8 @@ est_genocl(
 
 \item{SDv}{known cline gradient SD on log10 scale.}
 
+\item{estMu}{boolean, estimate genomic cline means (TRUE) or assume a prior mean of 0 (FALSE, the default).}
+
 \item{n_chains}{number of HMC chains for posterior inference.}
 
 \item{n_iters}{A positive integer specifying the number of iterations for each chain (including warmup), default is 2000.}
@@ -60,7 +63,7 @@ est_genocl(
 \item{n_cores}{number of cores to use for HMC, leave as NULL to automatically detect the number of cores present (no more than n_chains cores can be used even if available).}
 }
 \value{
-A list of parameter estimates and full HMC results from stan, this includes cline parameters (center and gradient), and, for hierarchical models, standard deviations describing variability in clines across loci (SDc and SDv). Parameter estimates are provided as a point estimate (median of the posterior) and 95\% equal-tail probability intervals (2.5th and 97.5th quantiles of the posterior distribution). These are provided as a vector or matrix depending on the dimensionality of the parameter. The full HMC output from rstan is provided as the final element in the list. This can be used for HMC diagnostics and to extract other model outputs not provided by default.
+A list of parameter estimates and full HMC results from stan, this includes cline parameters (center and gradient), and, for hierarchical models, standard deviations describing variability in clines across loci (SDc and SDv). Mean values for cline center (Muc) and slope (Muv) are also provided if estMu is set to TRUE. Parameter estimates are provided as a point estimate (median of the posterior) and 90\% equal-tail probability intervals (5th and 95th quantiles of the posterior distribution). These are provided as a vector or matrix depending on the dimensionality of the parameter. The full HMC output from rstan is provided as the final element in the list. This can be used for HMC diagnostics and to extract other model outputs not provided by default.
 }
 \description{
 Uses Hamiltonian Monte Carlo (HMC) for Bayesian inference of genomic clines from genetic data. This fits a hierarchical log-logistic model for genomic clines with two key parameters, cline center and cline gradient (i.e., slope, inversely proportional to cline width). The model also estimates the cline standard deviations (SDs) across loci, SDc = variation in logit centers and SDv = variation in log10 gradients.

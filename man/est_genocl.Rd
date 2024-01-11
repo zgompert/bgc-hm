@@ -18,6 +18,8 @@ est_genocl(
   SDc = NULL,
   SDv = NULL,
   estMu = FALSE,
+  sd0 = 1,
+  mu0 = 1,
   n_chains = 4,
   n_iters = 2000,
   p_warmup = 0.5,
@@ -51,6 +53,10 @@ est_genocl(
 \item{SDv}{known cline gradient SD on log10 scale.}
 
 \item{estMu}{boolean, estimate genomic cline means (TRUE) or assume a prior mean of 0 (FALSE, the default).}
+
+\item{sd0}{standard deviation for the normal prior on the cline standard deviations, default is 1.}
+
+\item{mu0}{standard deviation for the normal prior on the cline mean, default is 1.}
 
 \item{n_chains}{number of HMC chains for posterior inference.}
 

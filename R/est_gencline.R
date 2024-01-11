@@ -14,6 +14,8 @@
 #' @param SDc known cline center SD on logit scale.
 #' @param SDv known cline gradient SD on log10 scale.
 #' @param estMu boolean, estimate genomic cline means (TRUE) or assume a prior mean of 0 (FALSE, the default). 
+#' @param sd0 standard deviation for the normal prior on the cline standard deviations, default is 1.
+#' @param mu0 standard deviation for the normal prior on the cline mean, default is 1.
 #' @param n_chains number of HMC chains for posterior inference.
 #' @param n_iters A positive integer specifying the number of iterations for each chain (including warmup), default is 2000.
 #' @param p_warmup proportion (between 0 and 1) of n_iters to use as warmup (i.e., burnin), default is 0.5.
@@ -35,7 +37,7 @@
 #' Gompert Z, et al. 2024. Bayesian hybrid zone analyses with Hamiltonian Monte Carlo in R. Manuscript in preparation
 #' @export
 est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genotype",ploidy="diploid",pldat=NULL,
-	hier=TRUE,SDc=NULL,SDv=NULL,estMu=FALSE,n_chains=4,n_iters=2000,p_warmup=0.5,n_thin=1,n_cores=NULL){
+	hier=TRUE,SDc=NULL,SDv=NULL,estMu=FALSE,sd0=1,mu0=1,n_chains=4,n_iters=2000,p_warmup=0.5,n_thin=1,n_cores=NULL){
 	
 	## get or set number of cores for HMC
 	if(is.null(n_cores)){
@@ -85,7 +87,7 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
         		list(center=runif(L,.3,.7),v=runif(L,.9,1.1),alpha=chain_id)
 		}
 		init_ll<-lapply(1:n_chains, function(id) initf(chain_id = id))
-		dat<-list(L=dim(Gx)[2],N=dim(Gx)[1],G=Gx,H=H,P0=p0,P1=p1,
+		dat<-list(L=dim(Gx)[2],N=dim(Gx)[1],G=Gx,H=H,P0=p0,P1=p1,sd0=sd0,
 		init=init_ll)
 
 		if(dim(Gx)[2]==1){stop("at least two loci required for the hierarchical model")}
@@ -105,7 +107,7 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
         		list(center=runif(L,.3,.7),v=runif(L,.9,1.1),alpha=chain_id)
 		}
 		init_ll<-lapply(1:n_chains, function(id) initf(chain_id = id))
-		dat<-list(L=dim(Gx)[2],N=dim(Gx)[1],G=Gx,H=H,P0=p0,P1=p1,
+		dat<-list(L=dim(Gx)[2],N=dim(Gx)[1],G=Gx,H=H,P0=p0,P1=p1,sd0=sd0,mu0=mu0,
 		init=init_ll)
 
 		if(dim(Gx)[2]==1){stop("at least two loci required for the hierarchical model")}
@@ -159,7 +161,7 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 		}
 		init_ll<-lapply(1:n_chains, function(id) initf(chain_id = id))
 		dat<-list(L=dim(Gx[[1]])[2],N=dim(Gx[[1]])[1],GL0=Gx[[1]],GL1=Gx[[2]],GL2=Gx[[3]],
-		H=H,P0=p0,P1=p1,init=init_ll)
+		H=H,P0=p0,P1=p1,sd0=sd0,init=init_ll)
 
 		if(dim(Gx[[1]])[2]==1){stop("at least two loci required for the hierarchical model")}
 
@@ -179,7 +181,7 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 		}
 		init_ll<-lapply(1:n_chains, function(id) initf(chain_id = id))
 		dat<-list(L=dim(Gx[[1]])[2],N=dim(Gx[[1]])[1],GL0=Gx[[1]],GL1=Gx[[2]],GL2=Gx[[3]],
-		H=H,P0=p0,P1=p1,init=init_ll)
+		H=H,P0=p0,P1=p1,sd0=sd0,mu0=mu0,init=init_ll)
 
 		if(dim(Gx[[1]])[2]==1){stop("at least two loci required for the hierarchical model")}
 
@@ -231,7 +233,7 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
         		list(center=runif(L,.3,.7),v=runif(L,.9,1.1),alpha=chain_id)
 		}
 		init_ll<-lapply(1:n_chains, function(id) initf(chain_id = id))
-		dat<-list(L=dim(Gx)[2],N=dim(Gx)[1],Z=Gx,H=H,init=init_ll)
+		dat<-list(L=dim(Gx)[2],N=dim(Gx)[1],Z=Gx,H=H,sd0=sd0,init=init_ll)
 
 		if(dim(Gx)[2]==1){stop("at least two loci required for the hierarchical model")}
 
@@ -250,7 +252,7 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
         		list(center=runif(L,.3,.7),v=runif(L,.9,1.1),alpha=chain_id)
 		}
 		init_ll<-lapply(1:n_chains, function(id) initf(chain_id = id))
-		dat<-list(L=dim(Gx)[2],N=dim(Gx)[1],Z=Gx,H=H,init=init_ll)
+		dat<-list(L=dim(Gx)[2],N=dim(Gx)[1],Z=Gx,H=H,sd0=sd0,mu0=mu0,init=init_ll)
 
 		if(dim(Gx)[2]==1){stop("at least two loci required for the hierarchical model")}
 
@@ -302,7 +304,7 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
         		list(center=runif(L,.3,.7),v=runif(L,.9,1.1),alpha=chain_id)
 		}
 		init_ll<-lapply(1:n_chains, function(id) initf(chain_id = id))
-		dat<-list(L=dim(Gx)[2],N=dim(Gx)[1],G=Gx,H=H,P0=p0,P1=p1,ploidy=pldat,
+		dat<-list(L=dim(Gx)[2],N=dim(Gx)[1],G=Gx,H=H,P0=p0,P1=p1,ploidy=pldat,sd0=sd0,
 		init=init_ll)
 
 		if(dim(Gx)[2]==1){stop("at least two loci required for the hierarchical model")}
@@ -322,7 +324,7 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
         		list(center=runif(L,.3,.7),v=runif(L,.9,1.1),alpha=chain_id)
 		}
 		init_ll<-lapply(1:n_chains, function(id) initf(chain_id = id))
-		dat<-list(L=dim(Gx)[2],N=dim(Gx)[1],G=Gx,H=H,P0=p0,P1=p1,ploidy=pldat,
+		dat<-list(L=dim(Gx)[2],N=dim(Gx)[1],G=Gx,H=H,P0=p0,P1=p1,ploidy=pldat,sd0=sd0,mu0=mu0,
 		init=init_ll)
 
 		if(dim(Gx)[2]==1){stop("at least two loci required for the hierarchical model")}
@@ -375,7 +377,7 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 		}
 		init_ll<-lapply(1:n_chains, function(id) initf(chain_id = id))
 		dat<-list(L=dim(Gx[[1]])[2],N=dim(Gx[[1]])[1],GL0=Gx[[1]],GL1=Gx[[2]],GL2=Gx[[3]],
-		H=H,P0=p0,P1=p1,ploidy=pldat,init=init_ll)
+		H=H,P0=p0,P1=p1,ploidy=pldat,sd0=sd0,init=init_ll)
 
 		if(dim(Gx[[1]])[2]==1){stop("at least two loci required for the hierarchical model")}
 
@@ -395,7 +397,7 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 		}
 		init_ll<-lapply(1:n_chains, function(id) initf(chain_id = id))
 		dat<-list(L=dim(Gx[[1]])[2],N=dim(Gx[[1]])[1],GL0=Gx[[1]],GL1=Gx[[2]],GL2=Gx[[3]],
-		H=H,P0=p0,P1=p1,ploidy=pldat,init=init_ll)
+		H=H,P0=p0,P1=p1,ploidy=pldat,sd0=sd0,mu0=mu0,init=init_ll)
 
 		if(dim(Gx[[1]])[2]==1){stop("at least two loci required for the hierarchical model")}
 
@@ -447,7 +449,7 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
         		list(center=runif(L,.3,.7),v=runif(L,.9,1.1),alpha=chain_id)
 		}
 		init_ll<-lapply(1:n_chains, function(id) initf(chain_id = id))
-		dat<-list(L=dim(Gx)[2],N=dim(Gx)[1],Z=Gx,H=H,ploidy=pldat,init=init_ll)
+		dat<-list(L=dim(Gx)[2],N=dim(Gx)[1],Z=Gx,H=H,ploidy=pldat,sd0=sd0,init=init_ll)
 
 		if(dim(Gx)[2]==1){stop("at least two loci required for the hierarchical model")}
 
@@ -466,7 +468,7 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
         		list(center=runif(L,.3,.7),v=runif(L,.9,1.1),alpha=chain_id)
 		}
 		init_ll<-lapply(1:n_chains, function(id) initf(chain_id = id))
-		dat<-list(L=dim(Gx)[2],N=dim(Gx)[1],Z=Gx,H=H,ploidy=pldat,init=init_ll)
+		dat<-list(L=dim(Gx)[2],N=dim(Gx)[1],Z=Gx,H=H,ploidy=pldat,sd0=sd0,mu0=mu0,init=init_ll)
 
 		if(dim(Gx)[2]==1){stop("at least two loci required for the hierarchical model")}
 

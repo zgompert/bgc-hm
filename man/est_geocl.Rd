@@ -16,6 +16,8 @@ est_geocl(
   prec = 0.001,
   y_lb = -2,
   y_ub = 2,
+  gamma_a = 0.1,
+  gamma_b = 0.01,
   n_chains = 4,
   n_iters = 2000,
   p_warmup = 0.5,
@@ -45,6 +47,10 @@ est_geocl(
 \item{y_lb}{minimum value of logit allele frequencies to include in the model (the default of -2 is a good choice)}
 
 \item{y_ub}{minimum value of logit allele frequencies to include in the model (the default of 2 is a good choice)}
+
+\item{gamma_a}{alpha parameter for gamma priors on the error standard deviation and standard deviation on the prior for slope (default = 0.1).}
+
+\item{gamma_b}{beta parameter for gamma priors on the error standard deviation and standard deviation on the prior for slope (default = 0.01).}
 
 \item{n_chains}{number of HMC chains for posterior inference.}
 

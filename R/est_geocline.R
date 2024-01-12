@@ -12,6 +12,8 @@
 #' @param prec approximate precision for known (or estimated) allele frequencies, which should be set to about 1/2N (use the average 2N across populations). Do not set this to 0, which can result in errors when working with the log of the allele frequencies.
 #' @param y_lb minimum value of logit allele frequencies to include in the model (the default of -2 is a good choice)
 #' @param y_ub minimum value of logit allele frequencies to include in the model (the default of 2 is a good choice)
+#' @param gamma_a alpha parameter for gamma priors on the error standard deviation and standard deviation on the prior for slope (default = 0.1).
+#' @param gamma_b beta parameter for gamma priors on the error standard deviation and standard deviation on the prior for slope (default = 0.01).
 #' @param n_chains number of HMC chains for posterior inference.
 #' @param n_iters A positive integer specifying the number of iterations for each chain (including warmup), default is 2000.
 #' @param p_warmup proportion (between 0 and 1) of n_iters to use as warmup (i.e., burnin), default is 0.5.
@@ -35,7 +37,7 @@
 
 #' @export
 est_geocl<-function(G=NULL,P=NULL,Geo=NULL,Ids=NULL,model="genotype",ploidy="diploid",pldat=NULL,hier=TRUE,prec=0.001,
-	y_lb=-2,y_ub=2,n_chains=4,n_iters=2000,p_warmup=0.5,n_thin=1,n_cores=NULL){
+	y_lb=-2,y_ub=2,gamma_a=0.1,gamma_b=0.01,n_chains=4,n_iters=2000,p_warmup=0.5,n_thin=1,n_cores=NULL){
 
         ## get or set number of cores for HMC
         if(is.null(n_cores)){
@@ -86,7 +88,8 @@ est_geocl<-function(G=NULL,P=NULL,Geo=NULL,Ids=NULL,model="genotype",ploidy="dip
 	Geo<-Geo-mean(Geo)
 	Y<-log(P/(1-P))
 	if(hier==TRUE){
-		dat<-list(L=dim(P)[2],J=dim(P)[1],Y=as.matrix(log(P/(1-P))),geo=Geo,lb=y_lb,ub=y_ub)
+		dat<-list(L=dim(P)[2],J=dim(P)[1],Y=as.matrix(log(P/(1-P))),geo=Geo,lb=y_lb,ub=y_ub,
+			ga=gamma_a,gb=gamma_b)
 		fit<-rstan::sampling(stanmodels$geocline,data=dat,
 			iter=n_iters,warmup=n_warmup,thin=n_thin)
 		w<-t(apply(rstan::extract(fit,"w")[[1]],2,quantile,probs=c(.5,.025,.05,.95,.975)))
@@ -98,7 +101,8 @@ est_geocl<-function(G=NULL,P=NULL,Geo=NULL,Ids=NULL,model="genotype",ploidy="dip
 		geoout<-list(w=w,cent=cent,slope=slope,mu=mu,sigma=sigma,geo_hmc=fit)
 	} else {
 		P<-as.vector(P)
-		dat<-list(J=length(P),Y=(log(P/(1-P))),geo=Geo,lb=y_lb,ub=y_ub)
+		dat<-list(J=length(P),Y=(log(P/(1-P))),geo=Geo,lb=y_lb,ub=y_ub,
+			ga=gamma_a,gb=gamma_b)
 		fit<-rstan::sampling(stanmodels$geocline_one,data=dat,
 			iter=n_iters,warmup=n_warmup,thin=n_thin)
 		w<-quantile(rstan::extract(fit,"w")[[1]],2,probs=c(.5,.025,.05,.95,.975))

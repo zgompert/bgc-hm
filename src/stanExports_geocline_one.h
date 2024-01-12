@@ -33,7 +33,7 @@ static int current_statement_begin__;
 stan::io::program_reader prog_reader__() {
     stan::io::program_reader reader;
     reader.add_event(0, 0, "start", "model_geocline_one");
-    reader.add_event(42, 40, "end", "model_geocline_one");
+    reader.add_event(44, 42, "end", "model_geocline_one");
     return reader;
 }
 #include <stan_meta_header.hpp>
@@ -45,6 +45,8 @@ private:
         std::vector<double> Y;
         double lb;
         double ub;
+        double ga;
+        double gb;
         double sdg;
 public:
     model_geocline_one(stan::io::var_context& context__,
@@ -114,22 +116,34 @@ public:
             vals_r__ = context__.vals_r("ub");
             pos__ = 0;
             ub = vals_r__[pos__++];
+            current_statement_begin__ = 8;
+            context__.validate_dims("data initialization", "ga", "double", context__.to_vec());
+            ga = double(0);
+            vals_r__ = context__.vals_r("ga");
+            pos__ = 0;
+            ga = vals_r__[pos__++];
+            current_statement_begin__ = 9;
+            context__.validate_dims("data initialization", "gb", "double", context__.to_vec());
+            gb = double(0);
+            vals_r__ = context__.vals_r("gb");
+            pos__ = 0;
+            gb = vals_r__[pos__++];
             // initialize transformed data variables
-            current_statement_begin__ = 11;
+            current_statement_begin__ = 13;
             sdg = double(0);
             stan::math::fill(sdg, DUMMY_VAR__);
             // execute transformed data statements
-            current_statement_begin__ = 12;
+            current_statement_begin__ = 14;
             stan::math::assign(sdg, (3 * sd(geo)));
             // validate transformed data
             // validate, set parameter ranges
             num_params_r__ = 0U;
             param_ranges_i__.clear();
-            current_statement_begin__ = 17;
-            num_params_r__ += 1;
-            current_statement_begin__ = 18;
-            num_params_r__ += 1;
             current_statement_begin__ = 19;
+            num_params_r__ += 1;
+            current_statement_begin__ = 20;
+            num_params_r__ += 1;
+            current_statement_begin__ = 21;
             num_params_r__ += 1;
         } catch (const std::exception& e) {
             stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
@@ -148,7 +162,7 @@ public:
         (void) pos__; // dummy call to supress warning
         std::vector<double> vals_r__;
         std::vector<int> vals_i__;
-        current_statement_begin__ = 17;
+        current_statement_begin__ = 19;
         if (!(context__.contains_r("slope")))
             stan::lang::rethrow_located(std::runtime_error(std::string("Variable slope missing")), current_statement_begin__, prog_reader__());
         vals_r__ = context__.vals_r("slope");
@@ -161,7 +175,7 @@ public:
         } catch (const std::exception& e) {
             stan::lang::rethrow_located(std::runtime_error(std::string("Error transforming variable slope: ") + e.what()), current_statement_begin__, prog_reader__());
         }
-        current_statement_begin__ = 18;
+        current_statement_begin__ = 20;
         if (!(context__.contains_r("cent")))
             stan::lang::rethrow_located(std::runtime_error(std::string("Variable cent missing")), current_statement_begin__, prog_reader__());
         vals_r__ = context__.vals_r("cent");
@@ -174,7 +188,7 @@ public:
         } catch (const std::exception& e) {
             stan::lang::rethrow_located(std::runtime_error(std::string("Error transforming variable cent: ") + e.what()), current_statement_begin__, prog_reader__());
         }
-        current_statement_begin__ = 19;
+        current_statement_begin__ = 21;
         if (!(context__.contains_r("serr")))
             stan::lang::rethrow_located(std::runtime_error(std::string("Variable serr missing")), current_statement_begin__, prog_reader__());
         vals_r__ = context__.vals_r("serr");
@@ -212,21 +226,21 @@ public:
         try {
             stan::io::reader<local_scalar_t__> in__(params_r__, params_i__);
             // model parameters
-            current_statement_begin__ = 17;
+            current_statement_begin__ = 19;
             local_scalar_t__ slope;
             (void) slope;  // dummy to suppress unused var warning
             if (jacobian__)
                 slope = in__.scalar_constrain(lp__);
             else
                 slope = in__.scalar_constrain();
-            current_statement_begin__ = 18;
+            current_statement_begin__ = 20;
             local_scalar_t__ cent;
             (void) cent;  // dummy to suppress unused var warning
             if (jacobian__)
                 cent = in__.scalar_constrain(lp__);
             else
                 cent = in__.scalar_constrain();
-            current_statement_begin__ = 19;
+            current_statement_begin__ = 21;
             local_scalar_t__ serr;
             (void) serr;  // dummy to suppress unused var warning
             if (jacobian__)
@@ -234,38 +248,38 @@ public:
             else
                 serr = in__.scalar_lb_constrain(0);
             // transformed parameters
-            current_statement_begin__ = 23;
+            current_statement_begin__ = 25;
             local_scalar_t__ w;
             (void) w;  // dummy to suppress unused var warning
             stan::math::initialize(w, DUMMY_VAR__);
             stan::math::fill(w, DUMMY_VAR__);
             // transformed parameters block statements
-            current_statement_begin__ = 25;
+            current_statement_begin__ = 27;
             stan::math::assign(w, (1 / (0.25 * slope)));
             // validate transformed parameters
             const char* function__ = "validate transformed params";
             (void) function__;  // dummy to suppress unused var warning
-            current_statement_begin__ = 23;
+            current_statement_begin__ = 25;
             if (stan::math::is_uninitialized(w)) {
                 std::stringstream msg__;
                 msg__ << "Undefined transformed parameter: w";
                 stan::lang::rethrow_located(std::runtime_error(std::string("Error initializing variable w: ") + msg__.str()), current_statement_begin__, prog_reader__());
             }
             // model body
-            current_statement_begin__ = 30;
+            current_statement_begin__ = 32;
             for (int j = 1; j <= J; ++j) {
-                current_statement_begin__ = 32;
+                current_statement_begin__ = 34;
                 if (as_bool((primitive_value(logical_gt(get_base1(Y, j, "Y", 1), lb)) && primitive_value(logical_lt(get_base1(Y, j, "Y", 1), ub))))) {
-                    current_statement_begin__ = 33;
+                    current_statement_begin__ = 35;
                     lp_accum__.add(normal_log(get_base1(Y, j, "Y", 1), (cent + (slope * get_base1(geo, j, "geo", 1))), serr));
                 }
             }
-            current_statement_begin__ = 37;
-            lp_accum__.add(normal_log(slope, 0, 10));
-            current_statement_begin__ = 38;
-            lp_accum__.add(normal_log(cent, 0, sdg));
             current_statement_begin__ = 39;
-            lp_accum__.add(gamma_log(serr, 0.1, 0.01));
+            lp_accum__.add(normal_log(slope, 0, 10));
+            current_statement_begin__ = 40;
+            lp_accum__.add(normal_log(cent, 0, sdg));
+            current_statement_begin__ = 41;
+            lp_accum__.add(gamma_log(serr, ga, gb));
         } catch (const std::exception& e) {
             stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
             // Next line prevents compiler griping about no return
@@ -331,13 +345,13 @@ public:
         if (!include_tparams__ && !include_gqs__) return;
         try {
             // declare and define transformed parameters
-            current_statement_begin__ = 23;
+            current_statement_begin__ = 25;
             double w;
             (void) w;  // dummy to suppress unused var warning
             stan::math::initialize(w, DUMMY_VAR__);
             stan::math::fill(w, DUMMY_VAR__);
             // do transformed parameters statements
-            current_statement_begin__ = 25;
+            current_statement_begin__ = 27;
             stan::math::assign(w, (1 / (0.25 * slope)));
             if (!include_gqs__ && !include_tparams__) return;
             // validate transformed parameters

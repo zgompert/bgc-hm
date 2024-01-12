@@ -6,6 +6,8 @@ data{
 	real Y[J, L]; /* 2D array of logit population allele frequencies */	
 	real lb; /* lower bound of logit p to include */
 	real ub; /* lower bound of logit p to include */
+	real ga; /* alpha parameter for gamma priors */
+	real gb; /* beta parameter for gamma priors */
 }
 
 transformed data{
@@ -47,7 +49,7 @@ model{
 	    target += normal_lpdf(cent[i] | 0, sdg);
 	}
 	target += normal_lpdf(mu | 0, sds);
-	target += gamma_lpdf(sigma | 0.1, 0.01);
-	target += gamma_lpdf(serr | 0.1, 0.01);    
+	target += gamma_lpdf(sigma | ga, gb);
+	target += gamma_lpdf(serr | ga, gb);    
 }
 

@@ -23,6 +23,8 @@ data{
 	int N; /* # of organisms */
 	real<lower=0, upper=2> Z[N, L]; /* 2D array of ancestry*/
 	vector<lower=0, upper=1>[N] H; /* vector of hybrid indexes */
+        real<lower=0> sd0; /* SD for SD of normal prior on cline distributions*/
+        real<lower=0> mu0; /* SD for mean of normal prior on cline distributions*/
 }
 
 parameters{
@@ -57,11 +59,11 @@ model{
 
 	}
 	/* increment prior on sc and sv */
-	target += normal_lpdf(sc | 0, 1);
-	target += normal_lpdf(sv | 0, 1);
+	target += normal_lpdf(sc | 0, sd0);
+	target += normal_lpdf(sv | 0, sd0);
         /* increment prior on muc and muv */
-        target += normal_lpdf(muc | 0, 1);
-        target += normal_lpdf(muv | 0, 1);
+        target += normal_lpdf(muc | 0, mu0);
+        target += normal_lpdf(muv | 0, mu0);
 
 }
 

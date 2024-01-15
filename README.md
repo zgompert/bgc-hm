@@ -25,7 +25,7 @@ This software now works, but I am still in the process of writing the examples a
 
 ## Fit genomic clines for an example data set with known genotypes
 
-This data set comprises 51 ancestry-informative loci, 100 putative hybrids and 50 individuals represntative of each parental species. All loci are diploid. The data were simulated with `dfuse` assuming 110 demes, m = 0.1 between neighboring demes, and 10 affecting hybrid fitness via underdominance (the underdominance model for `dfuse` is described in [Fierno et al. 2023](https://cshperspectives.cshlp.org/content/early/2023/09/21/cshperspect.a041434).
+This data set comprises 51 ancestry-informative loci, 100 putative hybrids and 50 individuals represntative of each parental species. All loci are diploid. The data were simulated with [dfuse](https://cbuerkle.bitbucket.io/software/dfuse/) assuming 110 demes, m = 0.1 between neighboring demes, and 10 affecting hybrid fitness via underdominance (the underdominance model for `dfuse` is described in [Fierno et al. 2023](https://cshperspectives.cshlp.org/content/early/2023/09/21/cshperspect.a041434).
 
 ```R
 ## load the data set

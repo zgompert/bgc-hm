@@ -11,7 +11,7 @@ You can install this package within R directly from GitHub. Compiling the code r
 install.packages("devtools")
 library(devtools)
 ## install bgc-hm
-## this will take a bit as it requires compiling a substantial amount of C++ code
+## this will take a bit (on the order of an hour, depending on what dependencies you already have installed)  as it requires compiling a substantial amount of C++ code
 devtools::install_github("zgompert/bgc-hm")
 ## load the bgc-hm package
 library(bgchm)
@@ -25,7 +25,9 @@ This software now works, but I am still in the process of writing the examples a
 
 ## Fit genomic clines for an example data set with known genotypes
 
-This data set comprises 51 ancestry-informative loci, 100 putative hybrids and 50 individuals represntative of each parental species. All loci are diploid. The data were simulated with [dfuse](https://cbuerkle.bitbucket.io/software/dfuse/) assuming 110 demes, m = 0.1 between neighboring demes, and 10 affecting hybrid fitness via underdominance (the underdominance model for `dfuse` is described in [Fierno et al. 2023](https://cshperspectives.cshlp.org/content/early/2023/09/21/cshperspect.a041434).
+This data set comprises 51 ancestry-informative loci, 100 putative hybrids and 50 individuals representative of each parental species. All loci are diploid. The data were simulated with [dfuse](https://cbuerkle.bitbucket.io/software/dfuse/) assuming 110 demes, m = 0.1 between neighboring demes, and 10 affecting hybrid fitness via underdominance (the underdominance model for `dfuse` is described in [Fierno et al. 2023](https://cshperspectives.cshlp.org/content/early/2023/09/21/cshperspect.a041434).
+
+XXXX possibly be explicit about the fact that no loci deviate substantially from the expectation (in this and second example)
 
 ```R
 ## load the data set
@@ -65,7 +67,7 @@ sz_out<-sum2zero(hmc=gc_out$gencline_hmc,transform=TRUE,ci=0.90)
 gencline_plot(center=gc_out$center[,1],v=gc_out$gradient,pdf=FALSE)
 gencline_plot(center=sz_out$center[,1],v=sz_out$gradient,pdf=FALSE)
 
-## summarize loci with credible deviations from genome-averge gradients, here the focus is
+## summarize loci with credible deviations from genome-average gradients, here the focus is
 ## specifically on steep clines indicative of loci introgressing less than the average
 which(sz_out$v[,2] > 1) ## index for loci with credibly steep clines
 sum(sz_out$v[,2] > 1) ## number of loci with credibly steep clines
@@ -77,12 +79,12 @@ q_out<-est_Q(Gx=GenHybrids,p0=p_out$p0[,1],p1=p_out$p1[,1],model="genotype",ploi
 ## plot the results
 tri_plot(hi=q_out$hi[,1],Q10=q_out$Q10[,1],pdf=FALSE,pch=19)
 ## note that some individuals appear to be likely backcrosses (close to the outer lines of the triangles)
-## but the inidividals with intermediate hybrid indexes are clearly not F1s but rather late generation hybrids
+## but the individals with intermediate hybrid indexes are clearly not F1s but rather late generation hybrids
 ```
 
 ## Fit genomic clines for an example data set with genotype likelihoods
 
-This data set comprises 51 ancestry-informative loci, 100 putative hybrids and 50 individuals represntative of each parental species. All loci are diploid. The data were simulated with `dfuse` assuming 110 demes, m = 0.1 between neighboring demes, and 100 loci weakly affecting hybrid fitness via underdominance.
+This data set comprises 51 ancestry-informative loci, 100 putative hybrids and 50 individuals representative of each parental species. All loci are diploid. The data were simulated with `dfuse` assuming 110 demes, m = 0.1 between neighboring demes, and 100 loci weakly affecting hybrid fitness via underdominance.
 
 ```R
 ## load the data set
@@ -97,7 +99,7 @@ p_out<-est_p(G0=GlikP0,G1=GlikP1,model="glik",ploidy="diploid")
 h_out<-est_hi(Gx=GlikHybrids,p0=p_out$p0[,1],p1=p_out$p1[,1],model="glik",ploidy="diploid")
 
 ## plot hybrid index estimates with 90% equal-tail probability intervals
-## sorted by hybid index, just a nice way to visualize what we have
+## sorted by hybrid index, just a nice way to visualize what we have
 ## in this example XXXX
 plot(sort(h_out$hi[,1]),ylim=c(0,1),pch=19,xlab="Individual (sorted by HI)",ylab="Hybrid index (HI)")
 segments(1:100,h_out$hi[order(h_out$hi[,1]),3],1:100,h_out$hi[order(h_out$hi[,1]),4])
@@ -121,7 +123,7 @@ sz_out<-sum2zero(hmc=gc_out$gencline_hmc,transform=TRUE,ci=0.90)
 gencline_plot(center=gc_out$center[,1],v=gc_out$gradient,pdf=FALSE)
 gencline_plot(center=sz_out$center[,1],v=sz_out$gradient,pdf=FALSE)
 
-## summarize loci with credible deviations from genome-averge gradients, here the focus is
+## summarize loci with credible deviations from genome-average gradients, here the focus is
 ## specifically on steep clines indicative of loci introgressing less than the average
 which(sz_out$v[,2] > 1) ## index for loci with credibly steep clines
 sum(sz_out$v[,2] > 1) ## number of loci with credibly steep clines
@@ -133,12 +135,12 @@ q_out<-est_Q(Gx=GlikHybrids,p0=p_out$p0[,1],p1=p_out$p1[,1],model="glik",ploidy=
 ## plot the results
 tri_plot(hi=q_out$hi[,1],Q10=q_out$Q10[,1],pdf=FALSE,pch=19)
 ## note that some individuals appear to be likely backcrosses (close to the outer lines of the triangles)
-## but the inidividals with intermediate hybrid indexes are clearly not F1s but rather late generation hybrids
+## but the individuals with intermediate hybrid indexes are clearly not F1s but rather late generation hybrids
 ```
 
 ## Fit genomic clines for an example data set with many loci
 
-This example demonstrates how to fit clines for many loci in a scalable, parallelizable manner. The first step is to use a representative subset of loci (1000 or fewer) to estimate hybrid indexes and cline parameter standard deviations. Once this is done, we can analyze the remainder of the loci indpendently, which means this can be done in parallel. In this example, I will parallelize this part of the analysis with a bash script that fits sets of 10,000 SNPs in 20 jobs (200,000 SNPs total) where up to 10 jobs run at once. Each job uses 4 cores (for the four HMC chains) and thus my example assumes you have a computer with 10 x 4 = 40 cores. This can of course be adjusted to fit the details of your computational resources. Each set of 10,000 SNPs is saved in a unique rda object, and these are then loaded and combined in R in a final step.
+This example demonstrates how to fit clines for many loci in a scalable, parallelizable manner. The first step is to use a representative subset of loci (1000 or fewer) to estimate hybrid indexes and cline parameter standard deviations. Once this is done, we can analyze the remainder of the loci independently, which means this can be done in parallel. In this example, I will parallelize this part of the analysis with a bash script that fits sets of 10,000 SNPs in 20 jobs (200,000 SNPs total) where up to 10 jobs run at once. Each job uses 4 cores (for the four HMC chains) and thus my example assumes you have a computer with 10 x 4 = 40 cores. This can of course be adjusted to fit the details of your computational resources. Each set of 10,000 SNPs is saved in a unique rda object, and these are then loaded and combined in R in a final step.
 
 ### Step 1: Estimate the cline SDs and hybrid indexes
 ```R
@@ -321,7 +323,7 @@ for(i in 2:51){
 
 # Citations
 
-The general hierarchical Bayesian model used for Bayesidan genomic cline analysis was described here:
+The general hierarchical Bayesian model used for Bayesian genomic cline analysis was described here:
 
 [Gompert Z, Buerkle CA (2011) Bayesian estimation of genomic clines. Molecular Ecology, 20:2111-2127.](https://onlinelibrary.wiley.com/doi/full/10.1111/j.1365-294X.2011.05074.x)
 

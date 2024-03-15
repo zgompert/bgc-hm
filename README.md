@@ -27,7 +27,7 @@ This software now works, but I am still in the process of writing the examples a
 
 This data set comprises 51 ancestry-informative loci, 100 putative hybrids and 50 individuals representative of each parental species. All loci are diploid. The data were simulated with [dfuse](https://cbuerkle.bitbucket.io/software/dfuse/) assuming 110 demes, m = 0.1 between neighboring demes, and 10 affecting hybrid fitness via underdominance (the underdominance model for `dfuse` is described in [Fierno et al. 2023](https://cshperspectives.cshlp.org/content/early/2023/09/21/cshperspect.a041434).
 
-[comment]: # possibly be explicit about the fact that no loci deviate substantially from the expectation (in this and second example)
+<!-- possibly be explicit about the fact that no loci deviate substantially from the expectation (in this and second example) -->
 
 ```R
 ## load the data set

@@ -4,6 +4,8 @@ This is an R package for Bayesian analyses of population genomic data from hybri
 
 The user manual is available [here](bgchm.pdf)
 
+[E-mail me](zach.gompert@usu.edu) (Zach Gompert) with questions, bug reports, etc.
+
 # Installation
 
 You can install this package within R directly from GitHub. Compiling the code requires a C++ compiler and associated components (see [Configuring C++ Toolchain](https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started#configuring-c-toolchain) from `rstan`).

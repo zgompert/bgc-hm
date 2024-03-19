@@ -4,7 +4,7 @@ This is an R package for Bayesian analyses of population genomic data from hybri
 
 The user manual is available [here](bgchm.pdf)
 
-[E-mail me](zach.gompert@usu.edu) (Zach Gompert) with questions, bug reports, etc.
+E-mail me (Zach Gompert) at zach-dot-gompert-at-usu-dot-edu with questions, bug reports, etc.
 
 # Installation
 

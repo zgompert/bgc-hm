@@ -21,11 +21,7 @@ devtools::install_github("zgompert/bgc-hm")
 library(bgchm)
 ```
 
-# Usage
-
-This software now works, but I am still in the process of writing the examples and testing everything. Thus, for the moment use this with caution (and maybe shoot me an email if you use this before I remove this message).
-
-# Examples
+# Usage examples
 
 ## Fit genomic clines for an example data set with known genotypes
 

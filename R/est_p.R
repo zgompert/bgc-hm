@@ -17,11 +17,20 @@
 #' @details
 #' Ploidy data are only required for the mixed ploidy data. In this case, there should be a list of matrixes (the 1st matrix is for the hybrid so not used here), including one for each parent (2nd and 3rd matrixes, with parent 0 first). The matrixes indicate whether each locus (column) for each individual (row) is diploid (2) or haploid (1).
 #'
-#' @return A list of parameter estimates and full HMC results from stan. Parameter estimates are provided as a point estimate (median of the posterior) and 95% equal-tail probability intervals (2.5th and 97.5th quantiles of the posterior distribution). These are provided as a vector or matrix depending on the dimensionality of the parameter. In this case, there are two matrixes, p0 and p1, for parent 0 and parent 1 allele frequencies. The full HMC output from rstan is provided as the final element in the list. This can be used for HMC diagnostics and to extract other model outputs not provided by default. 
+#' @return A list of parameter estimates and full HMC results from stan. Parameter estimates are provided as a point estimate (median of the posterior), 90% equal-tail probability intervals (2.5th and 97.5th quantiles of the posterior distribution), and 95% equal-tail probability intervals (2.5th and 97.5th quantiles of the posterior distribution). These are provided as a vector or matrix depending on the dimensionality of the parameter. In this case, there are two matrixes, p0 and p1, for parent 0 and parent 1 allele frequencies. The full HMC output from rstan is provided as the final element in the list. This can be used for HMC diagnostics and to extract other model outputs not provided by default. 
 #'
 #' @seealso 'rstan::stan' for details on HMC with stan and the rstan HMC 
 #'
 #' @export
+#' @examples
+#'\dontrun{
+#' ## load the data set
+#' data(genotypes)
+#' ## this includes three objects, GenHybrids, GenP0, and GenP1
+#'
+#' ## estimate parental allele frequencies, uses default HMC settings
+#' p_out<-est_p(G0=GenP0,G1=GenP1,model="genotype",ploidy="diploid")
+#' }
 est_p<-function(G0=NULL,G1=NULL,model="genotype",ploidy="diploid",pldat=NULL,
 	n_chains=4,n_iters=2000,p_warmup=0.5,n_thin=1,n_cores=NULL){
 

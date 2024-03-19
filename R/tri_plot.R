@@ -1,8 +1,8 @@
 #' Plots interpopulation ancestry (Q10) as a function of hybrid index
 #'
 #' Creates a triangle plot of hybrid index versus interpopulation ancestry.
-#' @param hi a vector of hybrid index estimates (from est_h or est_Q)
-#' @param Q10 a vector of interpopulation ancestry estimates (from est_Q)
+#' @param hi a vector of hybrid index estimates (from est_h or est_Q).
+#' @param Q10 a vector of interpopulation ancestry estimates (from est_Q).
 #' @param pdf a logical specifying whether results should be output to a pdf file; if false the plot is sent to the default graphics device.
 #' @param outf a character string specifying the name of the output file if 'pdf=TRUE' [default = tri_plot.pdf].
 #' @param ... additional arguments for plotting, see options in par and plot.

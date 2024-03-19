@@ -13,9 +13,9 @@ gencline_plot(
 )
 }
 \arguments{
-\item{center}{vector of cline centers (from est_gencline.R)}
+\item{center}{vector of cline centers (from est_gencline)}
 
-\item{v}{vector of cline gradients (from est_gencline.R)}
+\item{v}{vector of cline gradients (from est_gencline)}
 
 \item{pdf}{a logical specifying whether results should be output to a pdf file; if false the plot is sent to the default graphics device.}
 

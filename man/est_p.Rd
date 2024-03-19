@@ -39,7 +39,7 @@ est_p(
 \item{n_cores}{number of cores to use for HMC, leave as NULL to automatically detect the number of cores present (no more than n_chains cores can be used even if available).}
 }
 \value{
-A list of parameter estimates and full HMC results from stan. Parameter estimates are provided as a point estimate (median of the posterior) and 95\% equal-tail probability intervals (2.5th and 97.5th quantiles of the posterior distribution). These are provided as a vector or matrix depending on the dimensionality of the parameter. In this case, there are two matrixes, p0 and p1, for parent 0 and parent 1 allele frequencies. The full HMC output from rstan is provided as the final element in the list. This can be used for HMC diagnostics and to extract other model outputs not provided by default.
+A list of parameter estimates and full HMC results from stan. Parameter estimates are provided as a point estimate (median of the posterior), 90\% equal-tail probability intervals (2.5th and 97.5th quantiles of the posterior distribution), and 95\% equal-tail probability intervals (2.5th and 97.5th quantiles of the posterior distribution). These are provided as a vector or matrix depending on the dimensionality of the parameter. In this case, there are two matrixes, p0 and p1, for parent 0 and parent 1 allele frequencies. The full HMC output from rstan is provided as the final element in the list. This can be used for HMC diagnostics and to extract other model outputs not provided by default.
 }
 \description{
 Uses Hamiltonian Monte Carlo (HMC) for Bayesian inference parental allele frequencies from genetic data.
@@ -48,6 +48,16 @@ Uses Hamiltonian Monte Carlo (HMC) for Bayesian inference parental allele freque
 Parental allele frequencies can be inferred based on known genotypes (model = 'genotype') or genotype likelihoods (model = 'glik'). Genotypes should be encoded as 0 (homozygote), 1 (heterozygote) and 2 (alternative homozygote). No specific polarization (e.g., minor allele, reference allele, etc.) of 0 vs 2 is required. For haploid loci, you can use 0 and 1 or 0 and 2. Genotype likelihoods should be on their natural scale (not phred scaled) and the values for each locus for an individual should sum to 1. The data should be provided as a list of three matrixes, with the matrixes giving the likelihoods for genotypes 0, 1 and 2 respectively. Thus, each matrix will have one row per individual and one column per locus. For haploid loci with genotype likelihoods, you must use the 0 and 2 matrixes to store the likelihoods of the two possible states.
 
 Ploidy data are only required for the mixed ploidy data. In this case, there should be a list of matrixes (the 1st matrix is for the hybrid so not used here), including one for each parent (2nd and 3rd matrixes, with parent 0 first). The matrixes indicate whether each locus (column) for each individual (row) is diploid (2) or haploid (1).
+}
+\examples{
+\dontrun{
+## load the data set
+data(genotypes)
+## this includes three objects, GenHybrids, GenP0, and GenP1
+
+## estimate parental allele frequencies, uses default HMC settings
+p_out<-est_p(G0=GenP0,G1=GenP1,model="genotype",ploidy="diploid")
+}
 }
 \seealso{
 'rstan::stan' for details on HMC with stan and the rstan HMC

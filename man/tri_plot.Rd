@@ -7,9 +7,9 @@
 tri_plot(hi = NULL, Q10 = NULL, pdf = TRUE, outf = "tri_plot.pdf", ...)
 }
 \arguments{
-\item{hi}{a vector of hybrid index estimates (from est_h or est_Q)}
+\item{hi}{a vector of hybrid index estimates (from est_h or est_Q).}
 
-\item{Q10}{a vector of interpopulation ancestry estimates (from est_Q)}
+\item{Q10}{a vector of interpopulation ancestry estimates (from est_Q).}
 
 \item{pdf}{a logical specifying whether results should be output to a pdf file; if false the plot is sent to the default graphics device.}
 

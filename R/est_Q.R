@@ -1,12 +1,12 @@
 #' Function to estimate ancestry class proportions (Q)
 #'
-#' Uses Hamiltonian Monte Carlo (HMC) for Bayesian inference of ancestry classes from genetic data. Ancestry classes denote the proportion of an individual's genome where both gene copies come from source 1 (Q11), both gene copies come from source 0 (Q00), or where one gene copy comes from source 1 and one from source 0.
+#' Uses Hamiltonian Monte Carlo (HMC) for Bayesian inference of ancestry classes proportions from genetic data. Ancestry classes denote the proportion of an individual's genome where both gene copies come from source 1 (Q11), both gene copies come from source 0 (Q00), or where one gene copy comes from source 1 and one from source 0 (Q10).
 #' @param Gx genetic data for putative hybrids in the form of a matrix for known genotypes (rows = individuals, columns = loci), a list of matrixes for genotype likelihoods (same dimensions but one matrix per genotype), or  matrix of ancestry for the ancestry model (rows = individuals, columns = loci).
 #' @param G0 genetic data for parental reference set 0 formatted as described for Gx.
 #' @param G1 genetic data for parental reference set 1 formatted as described for Gx.
 #' @param p0 vector of allele frequencies for parental reference set 0 (one entry per locus).
 #' @param p1 vector allele frequencies for parental reference set 1 (one entry per locus).
-#' @param model for genetic data, either 'genotype' for known gentoypes, 'glik' for genotype likelihoods, or 'ancestry' for known ancestry.
+#' @param model for genetic data, either 'genotype' for known genotypes, 'glik' for genotype likelihoods, or 'ancestry' for known ancestry.
 #' @param ploidy species ploidy, either all 'diploid' or 'mixed' for diploid and haploid loci or individuals.
 #' @param pldat matrix or list of matrixes of ploidy data for mixed ploidy (rows = individuals, columns = loci) indicating ploidy (2 = diploid, 1 = haploid).
 #' @param n_chains number of HMC chains for posterior inference.
@@ -26,8 +26,22 @@
 #' @seealso 'rstan::stan' for details on HMC with stan and the rstan HMC output object.
 #'
 #' @references
-#' Gompert Z, et al. 2024. Bayesian hybrid zone analyses with Hamiltonian Monte Carlo in R. Manuscript in preparation
+#' Gompert Z, et al. 2024. Bayesian analyses of hybrid zones in R with Hamiltonian Monte Carlo. Manuscript in preparation.
 #' @export
+#' @examples
+#'\dontrun{
+#' ## load the data set
+#' data(genotypes)
+#' ## this includes three objects, GenHybrids, GenP0, and GenP1
+
+#' ## estimate parental allele frequencies, uses default HMC settings
+#' p_out<-est_p(G0=GenP0,G1=GenP1,model="genotype",ploidy="diploid")
+#' 
+#' ## estimate interspecific ancestry, this can
+#' ## be especially informative about the types of hybrids present
+#' q_out<-est_Q(Gx=GenHybrids,p0=p_out$p0[,1],p1=p_out$p1[,1],model="genotype",ploidy="diploid")
+#'}
+
 est_Q<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,model="genotype",ploidy="diploid",pldat=NULL,
 		n_chains=4,n_iters=2000,p_warmup=0.5,n_thin=1,n_cores=NULL){
 

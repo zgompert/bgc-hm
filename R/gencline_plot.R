@@ -1,8 +1,8 @@
 #' Plots genomic clines for a set of loci
 #'
 #' Plots a set of genomic clines.
-#' @param center vector of cline centers (from est_gencline.R)
-#' @param v vector of cline gradients (from est_gencline.R) 
+#' @param center vector of cline centers (from est_gencline)
+#' @param v vector of cline gradients (from est_gencline) 
 #' @param pdf a logical specifying whether results should be output to a pdf file; if false the plot is sent to the default graphics device. 
 #' @param outf a character string specifying the name of the output file if 'pdf=TRUE' [default = cline_plot.pdf].
 #' @param ... additional arguments for plotting, see options in par and plot.

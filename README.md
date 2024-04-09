@@ -332,4 +332,5 @@ The current set of models based on the log-logistic function and using HMC were 
 [Fierno TJ, Semenov G, Dopman EB, Taylor SA, Larson EL, Gompert Z (2023) Quantitative analyses of coupling in hybrid zones. Cold Spring Harb Perspect Biol, a041434.](https://cshperspectives.cshlp.org/content/early/2023/09/21/cshperspect.a041434)
 
 The following paper (in review at Molecular Ecology Resources) describes this specific R package:
+
 [Gompert Z, DeRaad D, Buerkle CA. A next generation of hierarchical Bayesian analyses of hybrid zones enables direct quantification of variation in introgression in R. bioRxiv 2024.03.29.587395.](https://www.biorxiv.org/content/10.1101/2024.03.29.587395v1)

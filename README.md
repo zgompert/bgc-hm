@@ -34,8 +34,8 @@ This data set comprises 51 ancestry-informative loci, 100 putative hybrids and 5
 data(genotypes)
 ## this includes three objects, GenHybrids, GenP0, and GenP1
 
-## estimate parental allele frequencies, uses default HMC settings
-p_out<-est_p(G0=GenP0,G1=GenP1,model="genotype",ploidy="diploid")
+## estimate parental allele frequencies, uses analytical solution 
+p_out<-est_p(G0=GenP0,G1=GenP1,model="genotype",ploidy="diploid",HMC=FALSE)
 
 ## estimate hybrid indexes, uses default HMC settings
 ## and uses point estimates (posterior medians) of allele frequencies
@@ -91,8 +91,8 @@ This data set comprises 51 ancestry-informative loci, 100 putative hybrids and 5
 data(gliks)
 ## this includes three objects, GlikHybrids, GlikP0, and GlikP1
 
-## estimate parental allele frequencies, uses default HMC settings
-p_out<-est_p(G0=GlikP0,G1=GlikP1,model="glik",ploidy="diploid")
+## estimate parental allele frequencies, uses analytical solution
+p_out<-est_p(G0=GlikP0,G1=GlikP1,model="glik",ploidy="diploid",HMC=FALSE)
 
 ## estimate hybrid indexes, uses default HMC settings
 ## and uses point estimates (posterior medians) of allele frequencies

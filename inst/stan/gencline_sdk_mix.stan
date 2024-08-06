@@ -9,18 +9,21 @@ functions {
 		real phi;
 		phi = calc_phi(h, vv, uu);
 		if(pl==2){/* diploid locus x ind */
-            if(g==0)
-                prob = log(phi * (1-p1) + (1-phi) * (1-p0)) + log(phi * (1-p1) + (1-phi) * (1-p0));
-            else if (g==1) 
-                prob = log(phi * (1-p1) + (1-phi) * (1-p0)) + log(phi * p1 + (1-phi) * p0);
-            else    
-                prob = log(phi * p1 + (1-phi) * p0) + log(phi * p1 + (1-phi) * p0);
-        } else { /* haploid locus x ind */
-            if(g==0)
-                prob = log(phi * (1-p1) + (1-phi) * (1-p0));
-            else
-               prob = log(phi * p1 + (1-phi) * p0) ;
-        }
+                	if(g==0)
+                		prob = log(phi * (1-p1) + (1-phi) * (1-p0)) + log(phi * (1-p1) + (1-phi) * (1-p0));
+            		else if (g==1) 
+                		prob = log(phi * (1-p1) + (1-phi) * (1-p0)) + log(phi * p1 + (1-phi) * p0);
+            		else    
+                		prob = log(phi * p1 + (1-phi) * p0) + log(phi * p1 + (1-phi) * p0);
+        	} else if(pl==1) { /* haploid locus x ind */
+            		if(g==0)
+                		prob = log(phi * (1-p1) + (1-phi) * (1-p0));
+            		else
+               			prob = log(phi * p1 + (1-phi) * p0) ;
+        	} else{
+        		prob=0;
+        	}
+        		
 		return prob;
 	}
 }

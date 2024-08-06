@@ -11,7 +11,7 @@
 #' @importFrom rstan sampling
 #'
 #' @references
-#' Gompert Z, et al. 2024. Bayesian analyses of hybrid zones in R with Hamiltonian Monte Carlo. Manuscript in preparation.
+#' Gompert Z, DeRaad D, Buerkle CA. A next generation of hierarchical Bayesian analyses of hybrid zones enables direct quantification of variation in introgression in R. bioRxiv 2024.03.29.587395.
 #' Stan Development Team (2022). RStan: the R interface to Stan. R package version 2.21.7. https://mc-stan.org
 #'
 NULL

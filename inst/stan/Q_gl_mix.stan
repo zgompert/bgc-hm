@@ -2,13 +2,15 @@ functions {
 	real calc_lik(real gl0, real gl1, real gl2, real p0, real p1, real q11, real q10, real q00, real pl){
 		real prob;
 		if(pl==2){/* diploid locus x ind */
-			prob = log(gl0) + log(q11 * (1-p1) * (1-p1) + q00 * (1-p0) * (1-p0) + q10 * (1-p1) * (1-p0));
-		    prob = log_sum_exp(prob, log(gl1) + log(q11 * 2 * (1-p0) * p0 + q00 * 2 * (1-p1) * p1 + q10 *  (1-p0) * p1 + q10 * p0 * (1-p1)));
+		prob = log(gl0) + log(q11 * (1-p1) * (1-p1) + q00 * (1-p0) * (1-p0) + q10 * (1-p1) * (1-p0));
+		prob = log_sum_exp(prob, log(gl1) + log(q11 * 2 * (1-p0) * p0 + q00 * 2 * (1-p1) * p1 + q10 *  (1-p0) * p1 + q10 * p0 * (1-p1)));
 	        prob = log_sum_exp(prob, log(gl2) + log(q11 * p1 * p1 + q00 * p0 * p0 + q10 * p1 * p0));
-	    } else { /* haploid locus x ind */
-   			prob = log(gl0) + log(q11 * (1-p1) + q00 * (1-p0) + 0.5 * q10 * (1-p1) +  0.5 * q10 * (1-p0));
-	        prob = log_sum_exp(prob, log(gl2) +log(q11 * p1 + q00 * p0 + 0.5 * q10 * p1 +  0.5 * q10 * p0));   
-	    }
+	    	} else if(pl==1){ /* haploid locus x ind */
+   	    	prob = log(gl0) + log(q11 * (1-p1) + q00 * (1-p0) + 0.5 * q10 * (1-p1) +  0.5 * q10 * (1-p0));
+	    	prob = log_sum_exp(prob, log(gl1) +log(q11 * p1 + q00 * p0 + 0.5 * q10 * p1 +  0.5 * q10 * p0));   
+	    	} else{
+	    	prob=0;
+	    	}
 	
 		return prob;
 	}

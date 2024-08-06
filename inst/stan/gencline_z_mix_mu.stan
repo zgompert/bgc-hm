@@ -15,12 +15,14 @@ functions {
         	    		prob = log(2) + log(phi) + log(1-phi);
        		 	else
             			prob = log(phi) + log(phi);
-		} else { /* haploid locus x ind */
+		} else if(pl==1){ /* haploid locus x ind */
 			if(z==0)
             			prob = log(1-phi);
        		 	else
             			prob = log(phi);
-            	}		
+            	} else{
+            		prob=0;
+            	}			
 		return prob;
 	}	
 }

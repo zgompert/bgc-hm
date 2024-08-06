@@ -3,7 +3,7 @@
 #' Re-calculates cline parameter estimates to ensure that the average cline parameter corresponds with expectations for genome-average introgression. 
 #' @param hmc HMC object from est_gencline.
 #' @param center vector or matrix of cline centers (from est_gencline). If a vector, there should be one element per locus; if a matrix, there should be one row per loucs and one column each for the point estimate and lower and upper bounds of the credible interval.
-#' @param v vector or matrix of cline graidents (from est_gencline). If a vector, there should be one element per locus; if a matrix, there should be one row per locus and one column each for the point estimate and lower and upper bounds of the credible interval.
+#' @param v vector or matrix of cline gradients (from est_gencline). If a vector, there should be one element per locus; if a matrix, there should be one row per locus and one column each for the point estimate and lower and upper bounds of the credible interval.
 #' @param transform Boolean variable indicating whether to apply the constraint on the natural scale of v and center (FALSE) or on the transformed scale of log(v) and logit(center). We recommend applying these transformations.
 #' @param ci size of the credible interval, specifically, the equal-tail probability interval, to generate from the HMC object (if supplied) [default = 0.95].
 #'
@@ -15,7 +15,7 @@
 #' @seealso 'rstan::stan' for details on HMC with stan and the rstan HMC output object.
 #'
 #' @references
-#' Gompert Z, et al. 2024. Bayesian analyses of hybrid zones in R with Hamiltonian Monte Carlo. Manuscript in preparation.
+#' Gompert Z, DeRaad D, Buerkle CA. A next generation of hierarchical Bayesian analyses of hybrid zones enables direct quantification of variation in introgression in R. bioRxiv 2024.03.29.587395.
 #' @export
 sum2zero<-function (center=NULL, v=NULL, hmc=NULL, transform=TRUE, ci=0.95){ 
 	if ((is.null(center) == TRUE | is.null(v) == TRUE) & is.null(hmc)) 

@@ -21,9 +21,9 @@
 #' @param n_cores number of cores to use for HMC, leave as NULL to automatically detect the number of cores present (no more than n_chains cores can be used even if more cores are available).
 #'
 #' @details
-#' Geographic clines are estimated from population (deme) allele frequencies. This is done using a linear model for the logit of the allele frequencies (a sigmoid cline on the natural scale becomes linear on the logit scale). Users can provide allele frequency estimates or the allele frequencies can be estimate from genotypic data. In the latter case, allele frequencies are first estimated based on known genotypes (model = 'genotype') or genotype likelihoods (model = 'glik'). Genotypes should be encoded as 0 (homozygote), 1 (heterozygote) and 2 (alternative homozygote). No specific polarization (e.g., minor allele, reference allele, etc.) of 0 vs 2 is required. For haploid loci, you can use 0 and 1 or 0 and 2. Genotype likelihoods should be on their natural scale (not phred scaled) and the values for each locus for an individual should sum to 1 (i.e., the likelihoods are scaled to be probabilities). The data should be provided as a list of three matrixes, with the matrixes giving the likelihoods for genotypes 0, 1 and 2 respectively. Thus, each matrix will have one row per individual and one column per locus. For haploid loci with genotype likelihoods, you must use the 0 and 2 matrixes to store the likelihoods of the two possible states. If provided directly, allele frequencies should be given as a matrix, with one column per locus (assumes bi-allelic SNPs or the equivalent) and one row per population (deme).  
+#' Geographic clines are estimated from population (deme) allele frequencies. This is done using a linear model for the logit of the allele frequencies (a sigmoid cline on the natural scale becomes linear on the logit scale). Users can provide allele frequency estimates or the allele frequencies can be estimate from genotypic data. In the latter case, allele frequencies are first estimated based on known genotypes (model = 'genotype') or genotype likelihoods (model = 'glik') using an analytical solution for the posterior. Genotypes should be encoded as 0 (homozygote), 1 (heterozygote) and 2 (alternative homozygote). No specific polarization (e.g., minor allele, reference allele, etc.) of 0 vs 2 is required. For haploid loci, use 0 and 1. Genotype likelihoods should be on their natural scale (not phred scaled) and the values for each locus for an individual should sum to 1 (i.e., the likelihoods are scaled to be probabilities). The data should be provided as a list of three matrixes, with the matrixes giving the likelihoods for genotypes 0, 1 and 2 respectively. Thus, each matrix will have one row per individual and one column per locus. For haploid loci with genotype likelihoods, use the 0 and 1 matrixes to store the likelihoods of the two possible states. If provided directly, allele frequencies should be given as a matrix, with one column per locus (assumes bi-allelic SNPs or the equivalent) and one row per population (deme).  
 #' @details
-#' Ploidy data are only required for mixed ploidy genotypic data (they are not used if allele frequencies are provided directly). In this case, there should be one matrix with the same dimensions as the genetic data. The values in the matrix indicate whether each locus (column) for each individual (row) is diploid (2) or haploid (1).
+#' Ploidy data are only required for mixed ploidy genotypic data (they are not used if allele frequencies are provided directly). In this case, there should be one matrix with the same dimensions as the genetic data. The values in the matrix indicate whether each locus (column) for each individual (row) is diploid (2) or haploid (1). Ploidy can be set to 0 to denote missing data.
 #' @details
 #' The model assumes organisms have been sampled from populations (demes) along a 1D transect through a hybrid zone. Various approaches exist for approximating a 2D sampling scheme in 1D and can be used to transform coordinates to a single dimension. No specific coordinate units are expected, and coordinates are always centered (given a mean of 0) prior to analysis (this is done internally if not done by the user). If population allele frequencies are given directly, populations are assumed to be in the same order in the Geo vector and allele frequency matrix. If genotypic data are provided, and additional object, Ids, is required that indicates which population (numbered 1 to the number of populations and following the order in Geo) each individual belongs to. 
 #' @details The model works with the logit of the allele frequencies. Consequently, allele frequencies of 0 are not allowed (these will cause an error). The value specified by prec will be added to allele frequencies of 0 and subtracted from allele frequencies of 1. This prevents problems with taking logs and also is meant to reflect that fact that one cannot be certain an allele is not present in a population. We recommend setting prec to 1/2N, where N is the mean (or median) sample size across demes. Single and multilocus clines should be well approximated by a linear function for the logit allele frequencies near the center of the hybrid zone; this is the reason for only analyzing populations with intermediate allele frequencies (logit p between y_lb and y_ub, -2 and 2 by default, or p of about 0.11 to 0.88)
@@ -33,7 +33,7 @@
 #' @seealso 'rstan::stan' for details on HMC with stan and the rstan HMC output object.
 #'
 #' @references
-#' Gompert Z, et al. 2024. Bayesian analyses of hybrid zones in R with Hamiltonian Monte Carlo. Manuscript in preparation.
+#' Gompert Z, DeRaad D, Buerkle CA. A next generation of hierarchical Bayesian analyses of hybrid zones enables direct quantification of variation in introgression in R. bioRxiv 2024.03.29.587395.
 
 #' @export
 #' @examples
@@ -81,27 +81,33 @@ est_geocl<-function(G=NULL,P=NULL,Geo=NULL,Ids=NULL,model="genotype",ploidy="dip
 			for(i in 1:dim(G)[2]){
 				Y<-tapply(X=G[,i],INDEX=Ids,sum)
 				N<-tapply(X=G[,i]>=0,INDEX=Ids,sum)
-				P[,i]<-pbeta(q=0.5,Y+0.5,N-Y+0.5)
+				# posterior median
+				P[,i]<-qbeta(0.5,Y+0.5,N-Y+0.5)
 			}
 		} else if(model=="genotype" & ploidy=="mixed"){
 			P<-matrix(NA,nrow=length(Geo),ncol=dim(G)[2])
 			for(i in 1:dim(G)[2]){
 				Y<-tapply(X=G[,i],INDEX=Ids,sum)
 				N<-tapply(X=pldat[,i],INDEX=Ids,sum)
-				P[,i]<-pbeta(q=0.5,Y+0.5,N-Y+0.5)
+				# posterior median
+				P[,i]<-qbeta(0.5,Y+0.5,N-Y+0.5)
 			}
 		} else if(model=="glik" & ploidy=="diploid"){
-			dat<-list(L=dim(G[[1]])[2],N=dim(G[[1]])[1],J=length(Geo),GL0=G[[1]],GL1=G[[2]],GL2=G[[3]],pids=Ids)
-			fit<-rstan::sampling(stanmodels$popp_gl,data=dat,
-		                iter=n_iters,warmup=n_warmup,thin=n_thin)
-			Px<-rstan::extract(fit,"P")[[1]]
-			P<-apply(Px,c(2,3),median) 
+			P<-matrix(NA,nrow=length(Geo),ncol=dim(G)[2])
+			for(i in 1:dim(G)[2]){
+				Y<-tapply(X=G[[2]][,i]+G[[3]][,i]*2,INDEX=Ids,sum)
+				N<-tapply(X=G[[1]][,i]>=0,INDEX=Ids,sum)
+				# posterior median
+				P[,i]<-qbeta(0.5,Y+0.5,N-Y+0.5)
+			}		
 		} else { ## glik and mixed
-			dat<-list(L=dim(G[[1]])[2],N=dim(G[[1]])[1],J=length(Geo),GL0=G[[1]],GL1=G[[2]],GL2=G[[3]],pids=Ids)
-			fit<-rstan::sampling(stanmodels$popp_gl,data=dat,
-		                iter=n_iters,warmup=n_warmup,thin=n_thin)
-			Px<-rstan::extract(fit,"P")[[1]]
-			P<-apply(Px,c(2,3),median) 
+			P<-matrix(NA,nrow=length(Geo),ncol=dim(G)[2])
+			for(i in 1:dim(G)[2]){
+				Y<-tapply(X=G[[2]][,i]+G[[3]][,i]*2,INDEX=Ids,sum)
+				N<-tapply(X=pldat[,i],INDEX=Ids,sum)
+				# posterior median
+				P[,i]<-qbeta(0.5,Y+0.5,N-Y+0.5)
+			}
 		}
 	}
 	## avoids log(0) and divisions by 0

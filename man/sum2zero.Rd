@@ -9,7 +9,7 @@ sum2zero(center = NULL, v = NULL, hmc = NULL, transform = TRUE, ci = 0.95)
 \arguments{
 \item{center}{vector or matrix of cline centers (from est_gencline). If a vector, there should be one element per locus; if a matrix, there should be one row per loucs and one column each for the point estimate and lower and upper bounds of the credible interval.}
 
-\item{v}{vector or matrix of cline graidents (from est_gencline). If a vector, there should be one element per locus; if a matrix, there should be one row per locus and one column each for the point estimate and lower and upper bounds of the credible interval.}
+\item{v}{vector or matrix of cline gradients (from est_gencline). If a vector, there should be one element per locus; if a matrix, there should be one row per locus and one column each for the point estimate and lower and upper bounds of the credible interval.}
 
 \item{hmc}{HMC object from est_gencline.}
 
@@ -29,7 +29,7 @@ Genomic clines model locus-specifc patterns of introgression relative to genome-
 As an alternative, the constraint can be applied on the natural scale rather than the log or logit scale, that is, the mean cline center can be constrained to 0.5 and the mean gradient (v) to 1. For center, the difference will often be trivial. For gradient the difference could be greater, and my current suggestion is to use the log10 scale as v is a ratio.
 }
 \references{
-Gompert Z, et al. 2024. Bayesian analyses of hybrid zones in R with Hamiltonian Monte Carlo. Manuscript in preparation.
+Gompert Z, DeRaad D, Buerkle CA. A next generation of hierarchical Bayesian analyses of hybrid zones enables direct quantification of variation in introgression in R. bioRxiv 2024.03.29.587395.
 }
 \seealso{
 'rstan::stan' for details on HMC with stan and the rstan HMC output object.

@@ -5,9 +5,11 @@ functions {
     		prob = log(gl0) + log(h * (1-p1) + (1-h) * (1-p0)) + log(h * (1-p1) + (1-h) * (1-p0));
 	    	prob = log_sum_exp(prob, log(gl1) + log(2) + log(h * (1-p1) + (1-h) * (1-p0)) + log(h * p1 + (1-h) * p0));
 	    	prob = log_sum_exp(prob, log(h * p1 + (1-h) * p0) + log(h * p1 + (1-h) * p0));
-	    } else{ /* haploid locus x ind */
+	    } else if(pl==1){ /* haploid locus x ind */
 	        prob = log(gl0) + log(h * (1-p1) + (1-h) * (1-p0));
-	    	prob = log_sum_exp(prob, log(gl2) + log(h * p1 + (1-h) * p0));
+	    	prob = log_sum_exp(prob, log(gl1) + log(h * p1 + (1-h) * p0));
+	    } else{
+	    	prob=0;
 	    }
 		return prob;
 	}

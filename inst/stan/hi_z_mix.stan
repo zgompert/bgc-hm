@@ -4,16 +4,18 @@ functions {
 		if(pl==2){ /* diplid locus x ind */
         	if(z==0)
             		prob = log(1-h) + log(1-h);
-        	else if (z==1)
+        		else if (z==1)
             		prob = log(2) + log(h) + log(1-h);
-        	else
+        		else
             		prob = log(h) + log(h);
-        } else{ /* haplid locus x ind */
-            if(z==0)
+        	} else if(pl==1){ /* haplid locus x ind */
+        	        if(z==0)
             		prob = log(1-h);
-        	else
+        		else
             		prob = log(h);
-        }
+        	} else{
+        		prob=0;
+        	}
 		return prob;
 	}
 }

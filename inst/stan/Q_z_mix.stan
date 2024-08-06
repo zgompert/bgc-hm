@@ -9,11 +9,13 @@ functions {
 		    else
 			    prob = log(q11);
 		    return prob;
-        } else { /* haploid locus x ind */
+        } else if(pl==0){ /* haploid locus x ind */
             if(z==0)
                 prob = log(q00) + 0.5 * log(q10);
             else
                 prob = log(q11) + 0.5 * log(q10);   
+        } else{
+        	prob=0;
         }
         return prob;
 	}

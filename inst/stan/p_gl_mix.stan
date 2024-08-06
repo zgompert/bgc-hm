@@ -6,10 +6,12 @@ functions {
         		prob = log(gl0) + log(1-p) + log(1-p); 
        			prob = log_sum_exp(prob, log(gl1) + log(2) + log(p) + log(1-p));                  
         		prob = log_sum_exp(prob, log(gl2) + log(p) + log(p));
-		} else { /* haploid locus x ind */
+		} else if(pl==1) { /* haploid locus x ind */
 			prob = log(gl0) + log(1-p); 
-			/* store one copy alt allele as gl2 */
-        		prob = log_sum_exp(prob, log(gl2) + log(p));
+			/* store one copy alt allele as gl1 */
+        		prob = log_sum_exp(prob, log(gl1) + log(p));
+        	} else {
+        		prob = 0; 
         	}	
 		return prob;
 	}

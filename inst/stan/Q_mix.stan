@@ -8,13 +8,15 @@ functions {
     			prob = log(q11 * 2 * (1-p0) * p0 + q00 * 2 * (1-p1) * p1 + q10 *  (1-p0) * p1 + q10 * p0 * (1-p1));
 	    	else
 	    		prob = log(q11 * p1 * p1 + q00 * p0 * p0 + q10 * p1 * p0);
-	    } else { /* haploid locus x ind */
+	    } else if(pl==1){ /* haploid locus x ind */
 	        if(g==0)
 	    		prob = log(q11 * (1-p1) + q00 * (1-p0) + 0.5 * q10 * (1-p1) + 0.5 * q10 * (1-p0));
 	    	else
 	    		prob = log(q11 * p1 + q00 * p0 + 0.5 * q10 * p1 + 0.5 * q10 * p0);
 	    
-	    }
+	    } else{
+	    	prob=0;
+	    }	
 		return prob;
 	}
 }

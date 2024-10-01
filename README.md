@@ -17,7 +17,7 @@ library(devtools)
 ## install bgc-hm
 ## this will take a bit (on the order of an hour, depending on what dependencies you already have installed)  as it requires compiling a substantial amount of C++ code
 devtools::install_github("zgompert/bgc-hm")
-## load the bgc-hm package
+## load the Bgc-hm package
 library(bgchm)
 ```
 
@@ -69,8 +69,8 @@ gencline_plot(center=sz_out$center[,1],v=sz_out$gradient,pdf=FALSE)
 
 ## summarize loci with credible deviations from genome-average gradients, here the focus is
 ## specifically on steep clines indicative of loci introgressing less than the average
-which(sz_out$v[,2] > 1) ## index for loci with credibly steep clines
-sum(sz_out$v[,2] > 1) ## number of loci with credibly steep clines
+which(sz_out$gradient[,2] > 1) ## index for loci with credibly steep clines
+sum(sz_out$gradient[,2] > 1) ## number of loci with credibly steep clines
 
 ## last, lets look at interspecific ancestry for the same data set, this can
 ## be especially informative about the types of hybrids present
@@ -100,7 +100,6 @@ h_out<-est_hi(Gx=GlikHybrids,p0=p_out$p0[,1],p1=p_out$p1[,1],model="glik",ploidy
 
 ## plot hybrid index estimates with 90% equal-tail probability intervals
 ## sorted by hybrid index, just a nice way to visualize what we have
-## in this example XXXX
 plot(sort(h_out$hi[,1]),ylim=c(0,1),pch=19,xlab="Individual (sorted by HI)",ylab="Hybrid index (HI)")
 segments(1:100,h_out$hi[order(h_out$hi[,1]),3],1:100,h_out$hi[order(h_out$hi[,1]),4])
 
@@ -125,8 +124,8 @@ gencline_plot(center=sz_out$center[,1],v=sz_out$gradient,pdf=FALSE)
 
 ## summarize loci with credible deviations from genome-average gradients, here the focus is
 ## specifically on steep clines indicative of loci introgressing less than the average
-which(sz_out$v[,2] > 1) ## index for loci with credibly steep clines
-sum(sz_out$v[,2] > 1) ## number of loci with credibly steep clines
+which(sz_out$gradient[,2] > 1) ## index for loci with credibly steep clines
+sum(sz_out$gradient[,2] > 1) ## number of loci with credibly steep clines
 
 ## last, lets look at interspecific ancestry for the same data set, this can
 ## be especially informative about the types of hybrids present
@@ -178,7 +177,7 @@ gc_out$SDv
 
 Here is the bash script, this could be run interactively or put in a SLURM script or equivalent to run on a cluster (that is what I normally do).
 ```bash
-#!/bin/sh
+#!/bin/bash
 ## max = number of jobs to run at once
 max=10
 ## total = total number of jobs

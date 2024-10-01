@@ -42,7 +42,7 @@ est_p(
 \item{HMC}{boolean denotes whether to use HMC (TRUE) or an analytical solution (FALSE) for the posterior for the genotype likelihood model (the analytical solution is always used for known genotypes), default is TRUE.}
 }
 \value{
-A list of parameter estimates and full HMC results from stan (only when HMC is used). Parameter estimates are provided as a point estimate (median of the posterior), 90\% equal-tail probability intervals (2.5th and 97.5th quantiles of the posterior distribution), and 95\% equal-tail probability intervals (2.5th and 97.5th quantiles of the posterior distribution). These are provided as a vector or matrix depending on the dimensionality of the parameter. In this case, there are two matrixes, p0 and p1, for parent 0 and parent 1 allele frequencies. The full HMC output from rstan is provided as the final element in the list. This can be used for HMC diagnostics and to extract other model outputs not provided by default.
+A list of parameter estimates and full HMC results from stan (only when HMC is used). Parameter estimates are provided as a point estimate (median of the posterior), 90\% equal-tail probability intervals (5th and 95th quantiles of the posterior distribution), and 95\% equal-tail probability intervals (2.5th and 97.5th quantiles of the posterior distribution). These are provided as a vector or matrix depending on the dimensionality of the parameter. In this case, there are two matrixes, p0 and p1, for parent 0 and parent 1 allele frequencies. The full HMC output from rstan is provided as the final element in the list. This can be used for HMC diagnostics and to extract other model outputs not provided by default.
 }
 \description{
 Bayesian inference parental allele frequencies from genetic data.

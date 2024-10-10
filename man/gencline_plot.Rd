@@ -9,6 +9,8 @@ gencline_plot(
   v = NULL,
   pdf = TRUE,
   outf = "cline_plot.pdf",
+  cvec = NULL,
+  xvec = NULL,
   ...
 )
 }
@@ -20,6 +22,10 @@ gencline_plot(
 \item{pdf}{a logical specifying whether results should be output to a pdf file; if false the plot is sent to the default graphics device.}
 
 \item{outf}{a character string specifying the name of the output file if 'pdf=TRUE' \link{default = cline_plot.pdf}.}
+
+\item{cvec}{vector of colors to use for clines (one entry per locus)}
+
+\item{xvec}{vector of line widths (relative to 1) to use for clines (one entry per locus)}
 
 \item{...}{additional arguments for plotting, see options in par and plot.}
 }

@@ -20,7 +20,7 @@
 #'
 #' @export
 pp_plot<-function(objs=NULL,param1="muc",param2="sdc",probs=c(0.5,0.75,0.95),colors="black",addPoints=TRUE,palpha=0.3,pdf=TRUE, outf="pp_plot.pdf",...){ 
-	## extract relevant parameters from the hmc objects
+	## extrac relevant parameters from the hmc objects
 	if(is.list(objs)==FALSE){
 		stop("a list object must be supplied to objs")
 	} 
@@ -30,6 +30,7 @@ pp_plot<-function(objs=NULL,param1="muc",param2="sdc",probs=c(0.5,0.75,0.95),col
 	} else{
 		N<-length(objs)
 	}
+
 	## set up colors for plotting
 	colors<-rep(colors,length.out=N)
 	probs<-sort(probs)
@@ -37,22 +38,27 @@ pp_plot<-function(objs=NULL,param1="muc",param2="sdc",probs=c(0.5,0.75,0.95),col
 	clist<-vector("list",N)
 	for(k in 1:N){
 		clist[[k]]<-rep(NA,length(probs))
-		for(j in length(probs)){
+		for(j in 1:length(probs)){
 			rgb <- farver::decode_colour(colors[k], alpha = TRUE)
-    			rgb[!is.na(alpha), 4]<-1-probs[j]
+    			rgb[, 4]<-1-probs[j]
     			clist[[k]][j]<-farver::encode_colour(rgb, rgb[, 4])
 		}
 		rgb <- farver::decode_colour(colors[k], alpha = TRUE)
-    		rgb[!is.na(alpha), 4]<-palpha
+    		rgb[, 4]<-palpha
     		colors[[k]]<-farver::encode_colour(rgb, rgb[, 4])
 	}
 
-	## create vectors to store HMC samples
+	# create vectors to store HMC samples
 	p1<-vector("list",N)
 	p2<-vector("list",N)
-	for(k in 1:N){
-		p1[[k]]<-rstan::extract(objs[[k]]$gencline_hmc,param1)[[1]]
-		p2[[k]]<-rstan::extract(objs[[k]]$gencline_hmc,param2)[[1]]
+	if(N==1){
+                p1[[k]]<-rstan::extract(objs$gencline_hmc,param1)[[1]]
+                p2[[k]]<-rstan::extract(objs$gencline_hmc,param2)[[1]]
+ 	} else{
+	 	for(k in 1:N){
+               		p1[[k]]<-rstan::extract(objs[[k]]$gencline_hmc,param1)[[1]]
+                	p2[[k]]<-rstan::extract(objs[[k]]$gencline_hmc,param2)[[1]]
+       		}
 	}
 	## compute plot bounds
 	xbnds<-c(min(unlist(p1)),max(unlist(p1)))
@@ -60,7 +66,7 @@ pp_plot<-function(objs=NULL,param1="muc",param2="sdc",probs=c(0.5,0.75,0.95),col
 	
 	if (pdf == TRUE) 
 		pdf(file = paste(out.file))
-  	plot(0,0,xlim=xbnds,ylim=ybnds,type='n',...)
+  	plot(0,0,xlim=xbnds,ylim=ybnds,type='n',xlab=param1, ylab=param2,...)
 	for(k in 1:N){
 		if(addPoints==TRUE)
 			points(p1[[k]],p2[[k]],col=colors[k],...)
@@ -81,7 +87,7 @@ pp_plot<-function(objs=NULL,param1="muc",param2="sdc",probs=c(0.5,0.75,0.95),col
 			for (i in 1:100) {
 				eps[i, ] <- mu + sf[1] * cos(theta[i]) * eigenvectors[, 1] + sf[2] * sin(theta[i]) * eigenvectors[, 2]
 			}
-			lines(eps,clist[[k]][j],...)
+			lines(eps[,1],eps[,2],col=clist[[k]][j],...)
 		}
 	}
 	if (pdf == TRUE) 

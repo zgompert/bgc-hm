@@ -29,7 +29,7 @@ Genomic clines model locus-specifc patterns of introgression relative to genome-
 As an alternative, the constraint can be applied on the natural scale rather than the log or logit scale, that is, the mean cline center can be constrained to 0.5 and the mean gradient (v) to 1. For center, the difference will often be trivial. For gradient the difference could be greater, and my current suggestion is to use the log10 scale as v is a ratio.
 }
 \references{
-Gompert Z, DeRaad D, Buerkle CA. A next generation of hierarchical Bayesian analyses of hybrid zones enables direct quantification of variation in introgression in R. bioRxiv 2024.03.29.587395.
+Gompert Z, DeRaad D, Buerkle CA. A next generation of hierarchical Bayesian analyses of hybrid zones enables model-based quantification of variation in introgression in R. bioRxiv 2024.03.29.587395.
 }
 \seealso{
 'rstan::stan' for details on HMC with stan and the rstan HMC output object.

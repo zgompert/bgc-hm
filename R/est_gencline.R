@@ -21,6 +21,7 @@
 #' @param p_warmup proportion (between 0 and 1) of n_iters to use as warmup (i.e., burnin), default is 0.5.
 #' @param n_thin positive integer, save every n_thin HMC iterations for the posterior, default is 1.
 #' @param n_cores number of cores to use for HMC, leave as NULL to automatically detect the number of cores present (no more than n_chains cores can be used even if more cores are available).
+#' @param full boolean denoting whether (TRUE, the default) or not (FALSE) to return the HMC Stan object with the full set of samples from the posterior.
 #'
 #' @details
 #' Clines can be inferred based on known genotypes (model = 'genotype'), genotype likelihoods, (model = 'glik') or known (estimated) ancestry (model = 'ancestry'). Genotypes should be encoded as 0 (homozygote), 1 (heterozygote) and 2 (alternative homozygote). No specific polarization (e.g., minor allele, reference allele, etc.) of 0 vs 2 is required. For haploid loci, use 0 and 1. Genotype likelihoods should be on their natural scale (not on the phred scaled) and the values for each locus for an individual should sum to 1 (i.e., the likelihoods are scaled to be probabilities). The data should be provided as a list of three matrixes, with the matrixes giving the likelihoods for genotypes 0, 1 and 2 respectively. Thus, each matrix will have one row per individual and one column per locus. For haploid loci with genotype likelihoods, you must use the 0 and 1 matrixes to store the likelihoods of the two possible states. For the ancestry model, clines are inferred directly from known local (locus-specific) ancestry rather than from genotype data. Users are free to use whatever software they prefer for local ancestry inference (many exist). In this case, each entry in the individual (rows) by locus (columns) matrix should denote the number of gene copies inherited from parental population 1 (where pure parent 1 corresponds with a hybrid index of 1 and pure parent 0 corresponds with a hybrid index of 0). Haploids can be encoded using 0 and 1. For all models, missing data can be encoded by setting the ploidy for an individual/locus to 0 (this indicates no information, whereas genotype likelihoods encode uncertainty in genotypes). 
@@ -34,7 +35,7 @@
 #' @seealso 'rstan::stan' for details on HMC with stan and the rstan HMC output object.
 #'
 #' @references
-#' Gompert Z, DeRaad D, Buerkle CA. A next generation of hierarchical Bayesian analyses of hybrid zones enables direct quantification of variation in introgression in R. bioRxiv 2024.03.29.587395.
+#' Gompert Z, DeRaad D, Buerkle CA. A next generation of hierarchical Bayesian analyses of hybrid zones enables model-based quantification of variation in introgression in R. bioRxiv 2024.03.29.587395.
 #' @export
 #' @examples
 #'\dontrun{
@@ -55,7 +56,8 @@
 #' gc_out<-est_genocl(Gx=GenHybrids,p0=p_out$p0[,1],p1=p_out$p1[,1],H=h_out$hi[,1],model="genotype",ploidy="diploid",hier=TRUE,n_iters=4000)
 #' }
 est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genotype",ploidy="diploid",pldat=NULL,
-	hier=TRUE,SDc=NULL,SDv=NULL,estMu=FALSE,sd0=1,mu0=1,n_chains=4,n_iters=2000,p_warmup=0.5,n_thin=1,n_cores=NULL){
+	hier=TRUE,SDc=NULL,SDv=NULL,estMu=FALSE,sd0=1,mu0=1,n_chains=4,n_iters=2000,p_warmup=0.5,n_thin=1,n_cores=NULL,
+	full=TRUE){
 	
 	## get or set number of cores for HMC
 	if(is.null(n_cores)){
@@ -121,7 +123,11 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 		sdc<-quantile(rstan::extract(fit,"sc")[[1]],probs=c(.5,.05,.95))
 		sdv<-quantile(rstan::extract(fit,"sv")[[1]],probs=c(.5,.05,.95))
 		## create a list with parameter estimates plus full hmc object
-        	Cout<-list(center=cc,gradient=cv,SDc=sdc,SDv=sdv,gencline_hmc=fit)
+        	if(full==TRUE){
+			Cout<-list(center=cc,gradient=cv,SDc=sdc,SDv=sdv,gencline_hmc=fit)
+		} else{
+			Cout<-list(center=cc,gradient=cv,SDc=sdc,SDv=sdv)
+		}
 	} else if(hier==TRUE & model=="genotype" & ploidy=="diploid" & estMu==TRUE){
 	## hierachical model, known genotypes, diploids, estimate means
 		## generate initial values of cline parameters
@@ -143,7 +149,11 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 		muc<-quantile(rstan::extract(fit,"muc")[[1]],probs=c(.5,.05,.95))
 		muv<-quantile(rstan::extract(fit,"muv")[[1]],probs=c(.5,.05,.95))
 		## create a list with parameter estimates plus full hmc object
-        	Cout<-list(center=cc,gradient=cv,SDc=sdc,SDv=sdv,Muc=muc,Muv=muv,gencline_hmc=fit)
+                if(full==TRUE){
+			Cout<-list(center=cc,gradient=cv,SDc=sdc,SDv=sdv,Muc=muc,Muv=muv,gencline_hmc=fit)
+		} else {
+			Cout<-list(center=cc,gradient=cv,SDc=sdc,SDv=sdv,Muc=muc,Muv=muv)
+		}
 	} else if(hier==FALSE & model=="genotype" & ploidy=="diploid"){
 	## known SD model, known genotypes, diploids
 		if(is.matrix(Gx)){
@@ -173,8 +183,11 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 			cv<-quantile(rstan::extract(fit,"v")[[1]],probs=c(.5,.05,.95))
 		}
 		## create a list with parameter estimates plus full hmc object
-        	Cout<-list(center=cc,gradient=cv,gencline_hmc=fit)
-
+        	if(full==TRUE){
+			Cout<-list(center=cc,gradient=cv,gencline_hmc=fit)
+		} else{
+			Cout<-list(center=cc,gradient=cv)
+		}
 	} else if(hier==TRUE & model=="glik" & ploidy=="diploid" & estMu==FALSE){
 	## hierachical model, genotype likelihoods, diploids
 		## generate initial values of cline parameters
@@ -194,7 +207,11 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 		sdc<-quantile(rstan::extract(fit,"sc")[[1]],probs=c(.5,.05,.95))
 		sdv<-quantile(rstan::extract(fit,"sv")[[1]],probs=c(.5,.05,.95))
 		## create a list with parameter estimates plus full hmc object
-        	Cout<-list(center=cc,gradient=cv,SDc=sdc,SDv=sdv,gencline_hmc=fit)
+        	if(full==TRUE){
+			Cout<-list(center=cc,gradient=cv,SDc=sdc,SDv=sdv,gencline_hmc=fit)
+		} else{
+			Cout<-list(center=cc,gradient=cv,SDc=sdc,SDv=sdv)
+		}
 	} else if(hier==TRUE & model=="glik" & ploidy=="diploid" & estMu==TRUE){
 	## hierachical model, genotype likelihoods, diploids, estimate means
 		## generate initial values of cline parameters
@@ -216,7 +233,11 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 		mudc<-quantile(rstan::extract(fit,"muc")[[1]],probs=c(.5,.05,.95))
 		mudv<-quantile(rstan::extract(fit,"muv")[[1]],probs=c(.5,.05,.95))
 		## create a list with parameter estimates plus full hmc object
-        	Cout<-list(center=cc,gradient=cv,SDc=sdc,SDv=sdv,Muc=muc,Muv=muv,gencline_hmc=fit)
+        	if(full==TRUE){
+			Cout<-list(center=cc,gradient=cv,SDc=sdc,SDv=sdv,Muc=muc,Muv=muv,gencline_hmc=fit)
+		} else{
+			Cout<-list(center=cc,gradient=cv,SDc=sdc,SDv=sdv,Muc=muc,Muv=muv)
+		}
 	} else if(hier==FALSE & model=="glik" & ploidy=="diploid"){
 	## known SD model, genotype likelihoods, diploids
 		if(is.matrix(Gx[[1]])){
@@ -247,7 +268,11 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 			cv<-quantile(rstan::extract(fit,"v")[[1]],probs=c(.5,.05,.95))
 		}
 		## create a list with parameter estimates plus full hmc object
-        	Cout<-list(center=cc,gradient=cv,gencline_hmc=fit)
+        	if(full==TRUE){
+			Cout<-list(center=cc,gradient=cv,gencline_hmc=fit)
+		} else{
+			Cout<-list(center=cc,gradient=cv)
+		}
 	} else if(hier==TRUE & model=="ancestry" & ploidy=="diploid" & estMu==FALSE){
 	## hierachical model, ancestry, diploids
 		## generate initial values of cline parameters
@@ -266,7 +291,11 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 		sdc<-quantile(rstan::extract(fit,"sc")[[1]],probs=c(.5,.05,.95))
 		sdv<-quantile(rstan::extract(fit,"sv")[[1]],probs=c(.5,.05,.95))
 		## create a list with parameter estimates plus full hmc object
-        	Cout<-list(center=cc,gradient=cv,SDc=sdc,SDv=sdv,gencline_hmc=fit)
+        	if(full==TRUE){
+			Cout<-list(center=cc,gradient=cv,SDc=sdc,SDv=sdv,gencline_hmc=fit)
+		} else {
+			Cout<-list(center=cc,gradient=cv,SDc=sdc,SDv=sdv)
+		}
 	} else if(hier==TRUE & model=="ancestry" & ploidy=="diploid" & estMu==TRUE){
 	## hierachical model, ancestry, diploids, estimate means
 		## generate initial values of cline parameters
@@ -287,7 +316,11 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 		muc<-quantile(rstan::extract(fit,"muc")[[1]],probs=c(.5,.05,.95))
 		muv<-quantile(rstan::extract(fit,"muv")[[1]],probs=c(.5,.05,.95))
 		## create a list with parameter estimates plus full hmc object
-        	Cout<-list(center=cc,gradient=cv,SDc=sdc,SDv=sdv,Muc=muc,Muv=muv,gencline_hmc=fit)
+        	if(full==TRUE){
+			Cout<-list(center=cc,gradient=cv,SDc=sdc,SDv=sdv,Muc=muc,Muv=muv,gencline_hmc=fit)
+		} else {
+			Cout<-list(center=cc,gradient=cv,SDc=sdc,SDv=sdv,Muc=muc,Muv=muv)
+		}
 	} else if(hier==FALSE & model=="ancestry" & ploidy=="diploid"){
 	## known SD model, ancestry, diploids
 		if(is.matrix(Gx)){
@@ -317,7 +350,11 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 			cv<-quantile(rstan::extract(fit,"v")[[1]],probs=c(.5,.05,.95))
 		}
 		## create a list with parameter estimates plus full hmc object
-        	Cout<-list(center=cc,gradient=cv,gencline_hmc=fit)
+        	if(full==TRUE){
+			Cout<-list(center=cc,gradient=cv,gencline_hmc=fit)
+		} else{
+			Cout<-list(center=cc,gradient=cv)
+		}
 
 	} else if(hier==TRUE & model=="genotype" & ploidy=="mixed" & estMu==FALSE){
 	## hierachical model, known genotypes, mixed ploidy
@@ -338,7 +375,11 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 		sdc<-quantile(rstan::extract(fit,"sc")[[1]],probs=c(.5,.05,.95))
 		sdv<-quantile(rstan::extract(fit,"sv")[[1]],probs=c(.5,.05,.95))
 		## create a list with parameter estimates plus full hmc object
-        	Cout<-list(center=cc,gradient=cv,SDc=sdc,SDv=sdv,gencline_hmc=fit)
+        	if(full==TRUE){
+			Cout<-list(center=cc,gradient=cv,SDc=sdc,SDv=sdv,gencline_hmc=fit)
+		} else{
+			Cout<-list(center=cc,gradient=cv,SDc=sdc,SDv=sdv)
+		}
 	} else if(hier==TRUE & model=="genotype" & ploidy=="mixed" & estMu==TRUE){
 	## hierachical model, known genotypes, mixed ploidy, estimate means
 		## generate initial values of cline parameters
@@ -360,7 +401,11 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 		muc<-quantile(rstan::extract(fit,"muc")[[1]],probs=c(.5,.05,.95))
 		muv<-quantile(rstan::extract(fit,"muv")[[1]],probs=c(.5,.05,.95))
 		## create a list with parameter estimates plus full hmc object
-        	Cout<-list(center=cc,gradient=cv,SDc=sdc,SDv=sdv,Muc=muc,Muv=muv,gencline_hmc=fit)
+        	if(full==TRUE){
+			Cout<-list(center=cc,gradient=cv,SDc=sdc,SDv=sdv,Muc=muc,Muv=muv,gencline_hmc=fit)
+		} else{
+			Cout<-list(center=cc,gradient=cv,SDc=sdc,SDv=sdv,Muc=muc,Muv=muv)
+		}
 	} else if(hier==FALSE & model=="genotype" & ploidy=="mixed"){
 	## known SD model, known genotypes, mixed ploidy
 		if(is.matrix(Gx)){
@@ -390,7 +435,11 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 			cv<-quantile(rstan::extract(fit,"v")[[1]],probs=c(.5,.05,.95))
 		}
 		## create a list with parameter estimates plus full hmc object
-        	Cout<-list(center=cc,gradient=cv,gencline_hmc=fit)
+        	if(full==TRUE){
+			Cout<-list(center=cc,gradient=cv,gencline_hmc=fit)
+		} else{
+			Cout<-list(center=cc,gradient=cv)
+		}
 	} else if(hier==TRUE & model=="glik" & ploidy=="mixed" & estMu==FALSE){
 	## hierachical model, genotype likelihoods, mixed ploidy
 		## generate initial values of cline parameters
@@ -410,7 +459,11 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 		sdc<-quantile(rstan::extract(fit,"sc")[[1]],probs=c(.5,.05,.95))
 		sdv<-quantile(rstan::extract(fit,"sv")[[1]],probs=c(.5,.05,.95))
 		## create a list with parameter estimates plus full hmc object
-        	Cout<-list(center=cc,gradient=cv,SDc=sdc,SDv=sdv,gencline_hmc=fit)
+        	if(full==TRUE){
+			Cout<-list(center=cc,gradient=cv,SDc=sdc,SDv=sdv,gencline_hmc=fit)
+		} else{
+			Cout<-list(center=cc,gradient=cv,SDc=sdc,SDv=sdv)
+		}
 	} else if(hier==TRUE & model=="glik" & ploidy=="mixed" & estMu==TRUE){
 	## hierachical model, genotype likelihoods, mixed ploidy, estimate means
 		## generate initial values of cline parameters
@@ -432,7 +485,11 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 		muc<-quantile(rstan::extract(fit,"muc")[[1]],probs=c(.5,.05,.95))
 		muv<-quantile(rstan::extract(fit,"muv")[[1]],probs=c(.5,.05,.95))
 		## create a list with parameter estimates plus full hmc object
-        	Cout<-list(center=cc,gradient=cv,SDc=sdc,SDv=sdv,Muc=muc,Muv=muv,gencline_hmc=fit)
+        	if(full==TRUE){
+			Cout<-list(center=cc,gradient=cv,SDc=sdc,SDv=sdv,Muc=muc,Muv=muv,gencline_hmc=fit)
+		} else{
+			Cout<-list(center=cc,gradient=cv,SDc=sdc,SDv=sdv,Muc=muc,Muv=muv)
+		}
 	} else if(hier==FALSE & model=="glik" & ploidy=="mixed"){
 	## known SD model, genotype likelihoods, mixed
 		if(is.matrix(Gx[[1]])){
@@ -463,7 +520,11 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 			cv<-quantile(rstan::extract(fit,"v")[[1]],probs=c(.5,.05,.95))
 		}
 		## create a list with parameter estimates plus full hmc object
-        	Cout<-list(center=cc,gradient=cv,gencline_hmc=fit)
+        	if(full==TRUE){
+			Cout<-list(center=cc,gradient=cv,gencline_hmc=fit)
+		} else{
+			Cout<-list(center=cc,gradient=cv)
+		}
 	}  else if(hier==TRUE & model=="ancestry" & ploidy=="mixed" & estMu==FALSE){
 	## hierachical model, ancestry, mixed ancestry
 		## generate initial values of cline parameters
@@ -482,7 +543,11 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 		sdc<-quantile(rstan::extract(fit,"sc")[[1]],probs=c(.5,.05,.95))
 		sdv<-quantile(rstan::extract(fit,"sv")[[1]],probs=c(.5,.05,.95))
 		## create a list with parameter estimates plus full hmc object
-        	Cout<-list(center=cc,gradient=cv,SDc=sdc,SDv=sdv,gencline_hmc=fit)
+        	if(full==TRUE){
+			Cout<-list(center=cc,gradient=cv,SDc=sdc,SDv=sdv,gencline_hmc=fit)
+		} else{
+			Cout<-list(center=cc,gradient=cv,SDc=sdc,SDv=sdv)
+		}
 	}  else if(hier==TRUE & model=="ancestry" & ploidy=="mixed" & estMu==TRUE){
 	## hierachical model, ancestry, mixed ancestry, estimate means
 		## generate initial values of cline parameters
@@ -503,7 +568,11 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 		muc<-quantile(rstan::extract(fit,"muc")[[1]],probs=c(.5,.05,.95))
 		muv<-quantile(rstan::extract(fit,"muv")[[1]],probs=c(.5,.05,.95))
 		## create a list with parameter estimates plus full hmc object
-        	Cout<-list(center=cc,gradient=cv,SDc=sdc,SDv=sdv,Muc=muc,Muv=muv,gencline_hmc=fit)
+        	if(full==TRUE){
+			Cout<-list(center=cc,gradient=cv,SDc=sdc,SDv=sdv,Muc=muc,Muv=muv,gencline_hmc=fit)
+		} else{
+			Cout<-list(center=cc,gradient=cv,SDc=sdc,SDv=sdv,Muc=muc,Muv=muv)
+		}
 	} else if(hier==FALSE & model=="ancestry" & ploidy=="mixed"){
 	## known SD model, ancestry, diploids
 		if(is.matrix(Gx)){
@@ -533,7 +602,11 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 			cv<-quantile(rstan::extract(fit,"v")[[1]],probs=c(.5,.05,.95))
 		}
 		## create a list with parameter estimates plus full hmc object
-        	Cout<-list(center=cc,gradient=cv,gencline_hmc=fit)
+        	if(full==TRUE){
+			Cout<-list(center=cc,gradient=cv,gencline_hmc=fit)
+		} else{
+			Cout<-list(center=cc,gradient=cv)
+		}
 	}
 	
 	

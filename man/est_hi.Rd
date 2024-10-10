@@ -17,7 +17,8 @@ est_hi(
   n_iters = 2000,
   p_warmup = 0.5,
   n_thin = 1,
-  n_cores = NULL
+  n_cores = NULL,
+  full = TRUE
 )
 }
 \arguments{
@@ -46,6 +47,8 @@ est_hi(
 \item{n_thin}{positive integer, save every n_thin HMC iterations for the posterior, default is 1.}
 
 \item{n_cores}{number of cores to use for HMC, leave as NULL to automatically detect the number of cores present (no more than n_chains cores can be used even if available).}
+
+\item{full}{boolean denoting whether (TRUE, the default) or not (FALSE) to return the HMC Stan object with the full set of samples from the posterior.}
 }
 \value{
 A list of parameter estimates (hi = hybrid indexes) and full HMC results from stan. Parameter estimates are provided as a point estimate (median of the posterior), 90\% equal-tail probability intervals (5th and 95th quantiles of the posterior distribution), 95\% equal-tail probability intervals (2.5th and 97.5th quantiles of the posterior distribution). These are provided as a vector or matrix depending on the dimensionality of the parameter. The full HMC output from rstan is provided as the final element in the list. This can be used for HMC diagnostics and to extract other model outputs not provided by default.
@@ -77,7 +80,7 @@ h_out<-est_hi(Gx=GenHybrids,p0=p_out$p0[,1],p1=p_out$p1[,1],model="genotype",plo
 }
 }
 \references{
-Gompert Z, DeRaad D, Buerkle CA. A next generation of hierarchical Bayesian analyses of hybrid zones enables direct quantification of variation in introgression in R. bioRxiv 2024.03.29.587395.
+Gompert Z, DeRaad D, Buerkle CA. A next generation of hierarchical Bayesian analyses of hybrid zones enables model-based quantification of variation in introgression in R. bioRxiv 2024.03.29.587395.
 }
 \seealso{
 'rstan::stan' for details on HMC with stan and the rstan HMC output object.

@@ -17,7 +17,8 @@ est_Q(
   n_iters = 2000,
   p_warmup = 0.5,
   n_thin = 1,
-  n_cores = NULL
+  n_cores = NULL,
+  full = TRUE
 )
 }
 \arguments{
@@ -46,6 +47,8 @@ est_Q(
 \item{n_thin}{positive integer, save every n_thin HMC iterations for the posterior, default is 1.}
 
 \item{n_cores}{number of cores to use for HMC, leave as NULL to automatically detect the number of cores present (no more than n_chains cores can be used even if available).}
+
+\item{full}{boolean denoting whether (TRUE, the default) or not (FALSE) to return the HMC Stan object with the full set of samples from the posterior.}
 }
 \value{
 A list of parameter estimates and full HMC results from stan, this includes Q (ancestry class proportions) and hybrid indexes, which are derived from Q. Parameter estimates are provided as a point estimate (median of the posterior) and 95\% equal-tail probability intervals (2.5th and 97.5th quantiles of the posterior distribution). These are provided as a vector or matrix depending on the dimensionality of the parameter. The full HMC output from rstan is provided as the final element in the list. This can be used for HMC diagnostics and to extract other model outputs not provided by default.
@@ -58,7 +61,7 @@ Ancestry class proportions can be estimated from known genotypes (model = 'genot
 
 Hybrid genetic (or ancestry) data are always required. For genotype or genotype likelihood models, users must either provide pre-estimated parental allele frequencies or parent genetic (genotypes or genotype likelihoods) that can be used to infer allele frequencies. Parental data are not required for the ancestry model
 
-Ploidy data are only required for the mixed ploidy data. In this case, there should be one matrix for the hybrids or a list of matrixes for the hybrids (1st matrix) and each parent (2nd and 3rd matrixes, with parent 0 first). The latter is required for the genotype or genotype likelihood models if parental allele frequencies are not provided. The matrixes indicate whether each locus (column) for each individual (row) is diploid (2) or haploid (1) (use 0 for missing data).
+Ploidy data are only required for the mixed ploidy data. In this case, there should be one matrix for the hybrids or a list of matrixes for the hybrids (1st matrix) and each parent (2nd and 3rd matrixes, with parent 0 first). The latter is required for the genotype or genotype likelihood models if parental allele frequencies are not provided. The matrixes indicate whether each locus (column) for each individual (row) is diploid (2) or haploid (1) (use 0 for missing data). Haploid loci are useful for estimating the proportion of the genome inherited from each reference population and thus are relevant for this model, but do not specifically provide information about how this is partitition into heterozygous vs homozygous ancestry classes.
 }
 \examples{
 \dontrun{
@@ -74,7 +77,7 @@ q_out<-est_Q(Gx=GenHybrids,p0=p_out$p0[,1],p1=p_out$p1[,1],model="genotype",ploi
 }
 }
 \references{
-Gompert Z, DeRaad D, Buerkle CA. A next generation of hierarchical Bayesian analyses of hybrid zones enables direct quantification of variation in introgression in R. bioRxiv 2024.03.29.587395.
+Gompert Z, DeRaad D, Buerkle CA. A next generation of hierarchical Bayesian analyses of hybrid zones enables model-based quantification of variation in introgression in R. bioRxiv 2024.03.29.587395.
 }
 \seealso{
 'rstan::stan' for details on HMC with stan and the rstan HMC output object.

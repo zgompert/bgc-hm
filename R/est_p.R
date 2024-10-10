@@ -12,6 +12,7 @@
 #' @param n_thin positive integer, save every n_thin HMC iterations for the posterior, default is 1.
 #' @param n_cores number of cores to use for HMC, leave as NULL to automatically detect the number of cores present (no more than n_chains cores can be used even if available).
 #' @param HMC boolean denotes whether to use HMC (TRUE) or an analytical solution (FALSE) for the posterior for the genotype likelihood model (the analytical solution is always used for known genotypes), default is TRUE.
+#' @param full boolean denoting whether (TRUE, the default) or not (FALSE) to return the HMC Stan object with the full set of samples from the posterior (only relevant if HMC = TRUE).
 #'
 #' @details
 #' Parental allele frequencies can be inferred based on known genotypes (model = 'genotype') or genotype likelihoods (model = 'glik'). With known genotypes, the posterior is computed exactly (it is a beta distribution given the binomial likelihood and a beta prior). With genotype likelihoods, the user can decide to compute the exact posterior based on a point estimate of the allele counts from the genotype likelihoods (HMC=FALSE), or to conduct the full Hamiltonian Monte Carlo analyses (HMC=TRUE). The latter provides a better characterization of uncertainty, but will take much more time. Thus, the analytical approach should be chosen for large (more than a few thousand loci) data sets. 
@@ -35,7 +36,8 @@
 #' p_out<-est_p(G0=GenP0,G1=GenP1,model="genotype",ploidy="diploid")
 #' }
 est_p<-function(G0=NULL,G1=NULL,model="genotype",ploidy="diploid",pldat=NULL,
-	n_chains=4,n_iters=2000,p_warmup=0.5,n_thin=1,n_cores=NULL,HMC=FALSE){
+	n_chains=4,n_iters=2000,p_warmup=0.5,n_thin=1,n_cores=NULL,HMC=FALSE,
+	full=TRUE){
 
         ## get or set number of cores for HMC
         if(is.null(n_cores)){
@@ -51,6 +53,16 @@ est_p<-function(G0=NULL,G1=NULL,model="genotype",ploidy="diploid",pldat=NULL,
 	a0<-.5
 	b0<-.5
 
+	mqbeta<-function(p=NA,shape1=NA,shape2=NA){
+		o<-cbind(qbeta(p[1],shape1=a,shape2=b),
+		      qbeta(p[2],shape1=a,shape2=b),
+		      qbeta(p[3],shape1=a,shape2=b),
+		      qbeta(p[4],shape1=a,shape2=b),
+		      qbeta(p[5],shape1=a,shape2=b))
+		colnames(o)<- paste(p*100,"%",sep="")
+		return(o)
+	}
+
 	if(model=="genotype" & ploidy=="diploid"){
 		G0<-as.matrix(G0)
 		G1<-as.matrix(G1)
@@ -59,12 +71,12 @@ est_p<-function(G0=NULL,G1=NULL,model="genotype",ploidy="diploid",pldat=NULL,
 		n<-rep(dim(G0)[1] *2, dim(G0)[2])
 		a<-y+a0
 		b<-n-y+b0
-		p0<-qbeta(c(.5,.025,.05,.95,.975),shape1=a,shape2=b)
+		p0<-mqbeta(c(.5,.025,.05,.95,.975),shape1=a,shape2=b)
 		y<-apply(G1,2,sum)
 		n<-rep(dim(G1)[1] *2, dim(G1)[2])
 		a<-y+a0
 		b<-n-y+b0
-		p1<-qbeta(c(.5,.025,.05,.95,.975),shape1=a,shape2=b)
+		p1<-mqbeta(c(.5,.025,.05,.95,.975),shape1=a,shape2=b)
 		pout<-list(p0=p0,p1=p1)
 
 	} else if(model=="glik" & ploidy=="diploid"){
@@ -80,19 +92,23 @@ est_p<-function(G0=NULL,G1=NULL,model="genotype",ploidy="diploid",pldat=NULL,
 			p0<-t(apply(rstan::extract(fit,"P0")[[1]],2,quantile,probs=c(.5,.025,.05,.95,.975)))
 			p1<-t(apply(rstan::extract(fit,"P1")[[1]],2,quantile,probs=c(.5,.025,.05,.95,.975)))
 			## create a list with parameter estimates plus full hmc object
-			pout<-list(p0=p0,p1=p1,p_hmc=fit)
+			if(full==TRUE){
+				pout<-list(p0=p0,p1=p1,p_hmc=fit)
+			} else{
+				pout<-list(p0=p0,p1=p1)
+			}
 		} else{ ## use analytical
 			## solve for posterior
 			y<-apply(G0[[2]]+G0[[3]]*2,2,sum)
 			n<-rep(dim(G0[[1]])[1] *2, dim(G0[[1]])[2])
 			a<-y+a0
 			b<-n-y+b0
-			p0<-qbeta(c(.5,.025,.05,.95,.975),shape1=a,shape2=b)
+			p0<-mqbeta(c(.5,.025,.05,.95,.975),shape1=a,shape2=b)
 			y<-apply(G1[[2]]+G1[[3]]*2,2,sum)
 			n<-rep(dim(G1[[1]])[1] *2, dim(G1[[1]])[2])
 			a<-y+a0
 			b<-n-y+b0
-			p1<-qbeta(c(.5,.025,.05,.95,.975),shape1=a,shape2=b)
+			p1<-mqbeta(c(.5,.025,.05,.95,.975),shape1=a,shape2=b)
 			pout<-list(p0=p0,p1=p1)
 		}
 	} else if(model=="genotype" & ploidy=="mixed"){
@@ -105,12 +121,12 @@ est_p<-function(G0=NULL,G1=NULL,model="genotype",ploidy="diploid",pldat=NULL,
 		n<-apply(pldat[[2]],2,sum)
 		a<-y+a0
 		b<-n-y+b0
-		p0<-qbeta(c(.5,.025,.05,.95,.975),shape1=a,shape2=b)
+		p0<-mqbeta(c(.5,.025,.05,.95,.975),shape1=a,shape2=b)
 		y<-apply(G1,2,sum)
 		n<-apply(pldat[[3]],2,sum)
 		a<-y+a0
 		b<-n-y+b0
-		p1<-qbeta(c(.5,.025,.05,.95,.975),shape1=a,shape2=b)
+		p1<-mqbeta(c(.5,.025,.05,.95,.975),shape1=a,shape2=b)
 		pout<-list(p0=p0,p1=p1)
 	
 	} else if(model=="glik" & ploidy=="mixed"){
@@ -130,19 +146,23 @@ est_p<-function(G0=NULL,G1=NULL,model="genotype",ploidy="diploid",pldat=NULL,
 			p0<-t(apply(rstan::extract(fit,"P0")[[1]],2,quantile,probs=c(.5,.025,.05,.95,.975)))
 			p1<-t(apply(rstan::extract(fit,"P1")[[1]],2,quantile,probs=c(.5,.025,.05,.95,.975)))
 			## create a list with parameter estimates plus full hmc object
-			pout<-list(p0=p0,p1=p1,p_hmc=fit)
+			if(full==TRUE){
+				pout<-list(p0=p0,p1=p1,p_hmc=fit)
+			} else{
+				pout<-list(p0=p0,p1=p1)
+			}
 		} else { ## use analytical
 			## solve for posterior
 			y<-apply(G0[[2]]+G0[[3]]*2,2,sum)
 			n<-apply(pldat[[2]],2,sum)
 			a<-y+a0
 			b<-n-y+b0
-			p0<-qbeta(c(.5,.025,.05,.95,.975),shape1=a,shape2=b)
+			p0<-mqbeta(c(.5,.025,.05,.95,.975),shape1=a,shape2=b)
 			y<-apply(G1[[2]]+G1[[3]]*2,2,sum)
 			n<-n<-apply(pldat[[3]],2,sum)
 			a<-y+a0
 			b<-n-y+b0
-			p1<-qbeta(c(.5,.025,.05,.95,.975),shape1=a,shape2=b)
+			p1<-mqbeta(c(.5,.025,.05,.95,.975),shape1=a,shape2=b)
 			pout<-list(p0=p0,p1=p1)
 		}
 	

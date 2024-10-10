@@ -14,6 +14,7 @@
 #' @param p_warmup proportion (between 0 and 1) of n_iters to use as warmup (i.e., burnin), default is 0.5.
 #' @param n_thin positive integer, save every n_thin HMC iterations for the posterior, default is 1.
 #' @param n_cores number of cores to use for HMC, leave as NULL to automatically detect the number of cores present (no more than n_chains cores can be used even if available).
+#' @param full boolean denoting whether (TRUE, the default) or not (FALSE) to return the HMC Stan object with the full set of samples from the posterior.
 #'
 #' @return A list of parameter estimates (hi = hybrid indexes) and full HMC results from stan. Parameter estimates are provided as a point estimate (median of the posterior), 90% equal-tail probability intervals (5th and 95th quantiles of the posterior distribution), 95% equal-tail probability intervals (2.5th and 97.5th quantiles of the posterior distribution). These are provided as a vector or matrix depending on the dimensionality of the parameter. The full HMC output from rstan is provided as the final element in the list. This can be used for HMC diagnostics and to extract other model outputs not provided by default.
 #'
@@ -28,7 +29,7 @@
 #' @seealso 'rstan::stan' for details on HMC with stan and the rstan HMC output object.
 #'
 #' @references
-#' Gompert Z, DeRaad D, Buerkle CA. A next generation of hierarchical Bayesian analyses of hybrid zones enables direct quantification of variation in introgression in R. bioRxiv 2024.03.29.587395.
+#' Gompert Z, DeRaad D, Buerkle CA. A next generation of hierarchical Bayesian analyses of hybrid zones enables model-based quantification of variation in introgression in R. bioRxiv 2024.03.29.587395.
 #' @export
 #' @examples
 #'\dontrun{
@@ -44,7 +45,7 @@
 #' h_out<-est_hi(Gx=GenHybrids,p0=p_out$p0[,1],p1=p_out$p1[,1],model="genotype",ploidy="diploid")
 #'}
 est_hi<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,model="genotype",ploidy="diploid",pldat=NULL,
-		 n_chains=4,n_iters=2000,p_warmup=0.5,n_thin=1,n_cores=NULL){
+		 n_chains=4,n_iters=2000,p_warmup=0.5,n_thin=1,n_cores=NULL,full=TRUE){
 
         ## get or set number of cores for HMC
         if(is.null(n_cores)){
@@ -92,9 +93,6 @@ est_hi<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,model="genotype",ploidy
 		fit<-rstan::sampling(stanmodels$hi,data=dat,
                    iter=n_iters,warmup=n_warmup,thin=n_thin)
 		hi<-t(apply(rstan::extract(fit,"H")[[1]],2,quantile,probs=c(.5,.025,.05,.95,.975)))
-		## create a list with parameter estimates plus full hmc object
-		hiout<-list(hi=hi,hi_hmc=fit)
-		return(hiout)
 	} else if(model=="glik" & ploidy=="diploid"){
 		## diploid with genotype likelihoods
 		dat<-list(L=dim(Gx[[1]])[2],N=dim(Gx[[1]])[1],GL0=Gx[[1]],GL1=Gx[[2]],GL2=Gx[[3]]
@@ -102,9 +100,6 @@ est_hi<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,model="genotype",ploidy
 		fit<-rstan::sampling(stanmodels$hi_gl,data=dat,
                    iter=n_iters,warmup=n_warmup,thin=n_thin)
 		hi<-t(apply(rstan::extract(fit,"H")[[1]],2,quantile,probs=c(.5,.025,.05,.95,.975)))
-		## create a list with parameter estimates plus full hmc object
-		hiout<-list(hi=hi,hi_hmc=fit)
-		return(hiout)
 	} else if(model=="ancestry" & ploidy=="diploid"){
 		## diploid with known ancestry
 		return(hiout)
@@ -112,17 +107,12 @@ est_hi<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,model="genotype",ploidy
 		fit<-rstan::sampling(stanmodels$hi_z,data=dat,
                    iter=n_iters,warmup=n_warmup,thin=n_thin)
 		hi<-t(apply(rstan::extract(fit,"H")[[1]],2,quantile,probs=c(.5,.025,.05,.95,.975)))
-		## create a list with parameter estimates plus full hmc object
-		hiout<-list(hi=hi,hi_hmc=fit)
 	} else if(model=="genotype" & ploidy=="mixed"){
 		## mixed ploidy with known genotypes
 		dat<-list(L=dim(Gx)[2],N=dim(Gx)[1],G=Gx,P0=p0,P1=p1,ploidy=pldat)
 		fit<-rstan::sampling(stanmodels$hi_mix,data=dat,
                    iter=n_iters,warmup=n_warmup,thin=n_thin)
 		hi<-t(apply(rstan::extract(fit,"H")[[1]],2,quantile,probs=c(.5,.025,.05,.95,.975)))
-		## create a list with parameter estimates plus full hmc object
-		hiout<-list(hi=hi,hi_hmc=fit)
-		return(hiout)
 	} else if(model=="glik" & ploidy=="mixed"){
 		## mixed ploidy with genotype likelihoods
 		dat<-list(L=dim(Gx[[1]])[2],N=dim(Gx[[1]])[1],GL0=Gx[[1]],GL1=Gx[[2]],GL2=Gx[[3]]
@@ -130,9 +120,6 @@ est_hi<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,model="genotype",ploidy
 		fit<-rstan::sampling(stanmodels$hi_gl_mix,data=dat,
                    iter=n_iters,warmup=n_warmup,thin=n_thin)
 		hi<-t(apply(rstan::extract(fit,"H")[[1]],2,quantile,probs=c(.5,.025,.05,.95,.975)))
-		## create a list with parameter estimates plus full hmc object
-		hiout<-list(hi=hi,hi_hmc=fit)
-		return(hiout)
 	} else if(model=="ancestry" & ploidy=="mixed"){
 		## mixed ploidy  with known ancestry
 		return(hiout)
@@ -140,8 +127,12 @@ est_hi<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,model="genotype",ploidy
 		fit<-rstan::sampling(stanmodels$hi_z_mix,data=dat,
                    iter=n_iters,warmup=n_warmup,thin=n_thin)
 		hi<-t(apply(rstan::extract(fit,"H")[[1]],2,quantile,probs=c(.5,.025,.05,.95,.975)))
-		## create a list with parameter estimates plus full hmc object
-		hiout<-list(hi=hi,hi_hmc=fit)
 	}
-	
+	## create a list with parameter estimates plus full hmc object
+	if(full==TRUE){
+		hiout<-list(hi=hi,hi_hmc=fit)
+	} else{
+		hiout<-list(hi=hi)
+	}
+	return(hiout)
 }

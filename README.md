@@ -58,6 +58,9 @@ gc_out<-est_genocl(Gx=GenHybrids,p0=p_out$p0[,1],p1=p_out$p1[,1],H=h_out$hi[,1],
 gc_out$SDc
 gc_out$SDv
 
+## examine a plot of the joint posterior distribution for the SDs
+pp_plot(objs=gc_out,param1="sdv",param2="sdc",probs=c(0.5,0.75,0.95),colors="black",addPoints=TRUE,palpha=0.1,pdf=FALSE,pch=19)
+
 ## impose sum-to-zero constraint on log/logit scale
 ## not totally necessary, but this is mostly a good idea
 sz_out<-sum2zero(hmc=gc_out$gencline_hmc,transform=TRUE,ci=0.90)
@@ -292,7 +295,7 @@ save(list=ls(),file="combinedClines.rda")
 ## now impose s2z constraints, make plots, etc.
 ```
 
-## Fit geographic clines for example data set of allele frequencies
+# Fit geographic clines for example data set of allele frequencies
 
 This data set comprises allele frequencies for 51 diploid loci from 110 demes. The data were simulated with m = 0.1 between neighboring demes and 10 loci affecting hybrid fitness via underdominance.
 ```R
@@ -320,6 +323,50 @@ for(i in 2:51){
 
 ```
 
+# Other topics of interest
+
+## General data formats and preparing data for the R package
+
+`bgchm` works on matrixes or list of matrixes. These are standard R data types. Matrixes can be created by reading tab or comma delimited data into R and converting the object to a matrix with `as.matrix()` if this was not done automatically. The tabular data files should be organized with rows corresponding to individuals and columns corresponding with loci. Lists can be made in R with the `list()` function. We expect reasonable quality control and filtering of DNA sequence data prior to analysis with `bgchm`. 
+
+## Missing data
+
+Several options exist for dealing with missing or uncertain data. First, in many cases data are not truly missing but uncertain, in other words there is uncertainty in the genotype of an individual because of low sequence coverage or sequence errors. These cases can be accomodated with the genotype likelihood model and we generally recommend such an approach when missing results from quantitative variation in uncertainty. In other cases one might have no data at all for some loci in some individuals and perfectly known (highly confident) genotypes for the rest. In such cases, we recommend using the known genotype models and designating the missing genotypes via the ploidy data objects. Specifically, the ploidy for missing data (locus by individual combinations) should be set to 0. Loci with 0 ploidy will be skipped in computations and thus will not contribute to the posterior distribution (the value of the genotype will be ignored). The ploidy data objects are also used to denote missingness due to some loci being haploid (rather than diploid) in some or all individuals (e.g., sex chromosomes, mtDNA loci, etc.). Here, ploidy for haploid loci should be denoted 1 (versus 2 for diploid loci). Details about the ploidy data object are described in the help functions for the relevant R functions in `bgchm`.
+
+## Assessing HMC performance
+
+`bgchm` is built on `Stan` and `rstan` and features from `rstan` can be used to assess HMC performance from the HMC Stan object returned by default from the core inference functions in `bgchm`. Here we demonstrate how to assess HMC performance based on in the context of the hybrid index estimation that is part of our first example above. See the [Stan Reference Manual](https://mc-stan.org/docs/reference-manual/analysis.html) for a detailed discussion of assessing the convergence metrics and summaries highlighted below.
+
+```R
+data(genotypes)
+## this includes three objects, GenHybrids, GenP0, and GenP1
+
+## estimate parental allele frequencies, uses analytical solution 
+p_out<-est_p(G0=GenP0,G1=GenP1,model="genotype",ploidy="diploid",HMC=FALSE)
+
+## estimate hybrid indexes, uses default HMC settings
+## and uses point estimates (posterior medians) of allele frequencies
+h_out<-est_hi(Gx=GenHybrids,p0=p_out$p0[,1],p1=p_out$p1[,1],model="genotype",ploidy="diploid")
+## view the summary from rstan
+h_out$hi_hmc
+
+## by default this prints a table with one row per parameter
+## columns of parameter estimates and two diagnostics
+## n_eff = the effective sample size for each parameter, larger is better
+## Rhat = potential scale reduction factor, which measures between chain variance
+## relative to within chain variance, which directly gets at convergence, 1 is ideal, 
+## less than 1.1 is good, and less than about 1.2 or so is fine, values notably larger 
+## than this should give some cause for concern about convergence
+
+## you can also look at sample histor plots
+rstan::traceplot(h_out$hi_hmc)
+
+## this shows the first 10 parameters by default
+## but specific parameters can be specified with the pars argument
+rstan::traceplot(h_out$hi_hmc,pars=c("H[1]","H[10]","H[20]"))
+
+``` 
+
 # Citations
 
 The general hierarchical Bayesian model used for Bayesian genomic cline analysis was described here:
@@ -330,6 +377,6 @@ The current set of models based on the log-logistic function and using HMC were 
 
 [Fierno TJ, Semenov G, Dopman EB, Taylor SA, Larson EL, Gompert Z (2023) Quantitative analyses of coupling in hybrid zones. Cold Spring Harb Perspect Biol, a041434.](https://cshperspectives.cshlp.org/content/early/2023/09/21/cshperspect.a041434)
 
-The following paper (in review at Molecular Ecology Resources) describes this specific R package:
+The following paper (under revision for Ecology and Evolution) describes this specific R package:
 
-[Gompert Z, DeRaad D, Buerkle CA. A next generation of hierarchical Bayesian analyses of hybrid zones enables direct quantification of variation in introgression in R. bioRxiv 2024.03.29.587395.](https://www.biorxiv.org/content/10.1101/2024.03.29.587395v1)
+[Gompert Z, DeRaad D, Buerkle CA. A next generation of hierarchical Bayesian analyses of hybrid zones enables model-based quantification of variation in introgression in R. bioRxiv 2024.03.29.587395.](https://www.biorxiv.org/content/10.1101/2024.03.29.587395v1)

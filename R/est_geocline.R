@@ -19,6 +19,7 @@
 #' @param p_warmup proportion (between 0 and 1) of n_iters to use as warmup (i.e., burnin), default is 0.5.
 #' @param n_thin positive integer, save every n_thin HMC iterations for the posterior, default is 1.
 #' @param n_cores number of cores to use for HMC, leave as NULL to automatically detect the number of cores present (no more than n_chains cores can be used even if more cores are available).
+#' @param full boolean denoting whether (TRUE, the default) or not (FALSE) to return the HMC Stan object with the full set of samples from the posterior.
 #'
 #' @details
 #' Geographic clines are estimated from population (deme) allele frequencies. This is done using a linear model for the logit of the allele frequencies (a sigmoid cline on the natural scale becomes linear on the logit scale). Users can provide allele frequency estimates or the allele frequencies can be estimate from genotypic data. In the latter case, allele frequencies are first estimated based on known genotypes (model = 'genotype') or genotype likelihoods (model = 'glik') using an analytical solution for the posterior. Genotypes should be encoded as 0 (homozygote), 1 (heterozygote) and 2 (alternative homozygote). No specific polarization (e.g., minor allele, reference allele, etc.) of 0 vs 2 is required. For haploid loci, use 0 and 1. Genotype likelihoods should be on their natural scale (not phred scaled) and the values for each locus for an individual should sum to 1 (i.e., the likelihoods are scaled to be probabilities). The data should be provided as a list of three matrixes, with the matrixes giving the likelihoods for genotypes 0, 1 and 2 respectively. Thus, each matrix will have one row per individual and one column per locus. For haploid loci with genotype likelihoods, use the 0 and 1 matrixes to store the likelihoods of the two possible states. If provided directly, allele frequencies should be given as a matrix, with one column per locus (assumes bi-allelic SNPs or the equivalent) and one row per population (deme).  
@@ -33,7 +34,7 @@
 #' @seealso 'rstan::stan' for details on HMC with stan and the rstan HMC output object.
 #'
 #' @references
-#' Gompert Z, DeRaad D, Buerkle CA. A next generation of hierarchical Bayesian analyses of hybrid zones enables direct quantification of variation in introgression in R. bioRxiv 2024.03.29.587395.
+#' Gompert Z, DeRaad D, Buerkle CA. A next generation of hierarchical Bayesian analyses of hybrid zones enables model-based quantification of variation in introgression in R. bioRxiv 2024.03.29.587395.
 
 #' @export
 #' @examples
@@ -61,7 +62,8 @@
 #' }
 #' }
 est_geocl<-function(G=NULL,P=NULL,Geo=NULL,Ids=NULL,model="genotype",ploidy="diploid",pldat=NULL,hier=TRUE,prec=0.001,
-	y_lb=-2,y_ub=2,gamma_a=0.1,gamma_b=0.01,n_chains=4,n_iters=2000,p_warmup=0.5,n_thin=1,n_cores=NULL){
+	y_lb=-2,y_ub=2,gamma_a=0.1,gamma_b=0.01,n_chains=4,n_iters=2000,p_warmup=0.5,n_thin=1,n_cores=NULL,
+	full=TRUE){
 
         ## get or set number of cores for HMC
         if(is.null(n_cores)){
@@ -128,7 +130,11 @@ est_geocl<-function(G=NULL,P=NULL,Geo=NULL,Ids=NULL,model="genotype",ploidy="dip
 		mu<-quantile(rstan::extract(fit,"mu")[[1]],probs=c(.5,.025,.05,.95,.975))
 		sigma<-quantile(rstan::extract(fit,"sigma")[[1]],probs=c(.5,.025,.05,.95,.975))
 		## create a list with parameter estimates plus full hmc object
-		geoout<-list(w=w,cent=cent,slope=slope,mu=mu,sigma=sigma,geo_hmc=fit)
+		if(full==TRUE){
+			geoout<-list(w=w,cent=cent,slope=slope,mu=mu,sigma=sigma,geo_hmc=fit)
+		} else{
+			geoout<-list(w=w,cent=cent,slope=slope,mu=mu,sigma=sigma)
+		}	
 	} else {
 		P<-as.vector(P)
 		dat<-list(J=length(P),Y=(log(P/(1-P))),geo=Geo,lb=y_lb,ub=y_ub,
@@ -139,8 +145,11 @@ est_geocl<-function(G=NULL,P=NULL,Geo=NULL,Ids=NULL,model="genotype",ploidy="dip
 		cent<-quantile(rstan::extract(fit,"cent")[[1]],2,probs=c(.5,.025,.05,.95,.975))
 		slope<-quantile(rstan::extract(fit,"slope")[[1]],2,probs=c(.5,.025,.05,.95,.975))
 		## create a list with parameter estimates plus full hmc object
-		geoout<-list(w=w,cent=cent,slope=slope,geo_hmc=fit)
-
+		if(full==TRUE){
+			geoout<-list(w=w,cent=cent,slope=slope,geo_hmc=fit)
+		} else{
+			geoout<-list(w=w,cent=cent,slope=slope)
+		}
 	}
 	return(geoout)
 }

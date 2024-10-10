@@ -15,7 +15,8 @@ est_p(
   p_warmup = 0.5,
   n_thin = 1,
   n_cores = NULL,
-  HMC = FALSE
+  HMC = FALSE,
+  full = TRUE
 )
 }
 \arguments{
@@ -40,6 +41,8 @@ est_p(
 \item{n_cores}{number of cores to use for HMC, leave as NULL to automatically detect the number of cores present (no more than n_chains cores can be used even if available).}
 
 \item{HMC}{boolean denotes whether to use HMC (TRUE) or an analytical solution (FALSE) for the posterior for the genotype likelihood model (the analytical solution is always used for known genotypes), default is TRUE.}
+
+\item{full}{boolean denoting whether (TRUE, the default) or not (FALSE) to return the HMC Stan object with the full set of samples from the posterior (only relevant if HMC = TRUE).}
 }
 \value{
 A list of parameter estimates and full HMC results from stan (only when HMC is used). Parameter estimates are provided as a point estimate (median of the posterior), 90\% equal-tail probability intervals (5th and 95th quantiles of the posterior distribution), and 95\% equal-tail probability intervals (2.5th and 97.5th quantiles of the posterior distribution). These are provided as a vector or matrix depending on the dimensionality of the parameter. In this case, there are two matrixes, p0 and p1, for parent 0 and parent 1 allele frequencies. The full HMC output from rstan is provided as the final element in the list. This can be used for HMC diagnostics and to extract other model outputs not provided by default.

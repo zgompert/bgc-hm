@@ -21,9 +21,9 @@ functions {
 data{
 	int L; /* # of loci */
 	int N; /* # of organisms */
-	real<lower=0, upper=2> Z[N, L]; /* 2D array of ancestry*/
+	array[N, L] real<lower=0, upper=2> Z; /* 2D array of ancestry*/
 	vector<lower=0, upper=1>[N] H; /* vector of hybrid indexes */
-        real<lower=0> sd0; /* SD for SD of normal prior on cline distributions*/
+    real<lower=0> sd0; /* SD for SD of normal prior on cline distributions*/
 }
 
 parameters{

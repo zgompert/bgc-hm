@@ -1,12 +1,11 @@
-
 data{
 	int J; /* # of populations */
-	real geo[J]; /* 1D array of geographic locations */
-	real Y[J]; /* 1D array of logit population allele frequencies */	
+	array[J] real geo; /* 1D array of geographic locations */
+	array[J] real Y; /* 1D array of logit population allele frequencies */	
 	real lb; /* lower bound of logit p to include */
 	real ub; /* lower bound of logit p to include */
-        real ga; /* alpha parameter for gamma priors */
-        real gb; /* beta parameter for gamma priors */
+    real ga; /* alpha parameter for gamma priors */
+    real gb; /* beta parameter for gamma priors */
 }
 
 transformed data{

@@ -30,12 +30,12 @@ functions {
 data{
 	int L; /* # of loci */
 	int N; /* # of organisms */
-	real<lower=0, upper=2> G[N, L]; /* 2D array of G*/
-	real<lower=0, upper=2> ploidy[N, L]; /* 2D array of ploidy */	
+	array[N, L] real<lower=0, upper=2> G; /* 2D array of G*/
+	array[N, L] real<lower=0, upper=2> ploidy; /* 2D array of ploidy */	
 	vector<lower=0, upper=1>[N] H; /* vector of hybrid indexes */
 	vector<lower=0, upper=1>[L] P0; /* parent 0 allele frequencies */
 	vector<lower=0, upper=1>[L] P1; /* parent 1 allele frequencies */
-	 real<lower=0> sd0; /* SD for SD of normal prior on cline distributions*/
+	real<lower=0> sd0; /* SD for SD of normal prior on cline distributions*/
 
 }
 

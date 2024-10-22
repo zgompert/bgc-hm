@@ -1,12 +1,11 @@
-
 data{
 	int L; /* # of loci */
 	int N0; /* # of parent 0 organisms */
 	int N1; /* # of parent 1 organisms */	
-	int<lower=0, upper=2> G0[N0, L]; /* 2D array of G for parent 0 */
-	int<lower=0, upper=2> G1[N1, L]; /* 2D array of G for parent 1 */
-	int<lower=0, upper=2> ploidy0[N0, L]; /* 2D array of ploidy for parent 0 */
-	int<lower=0, upper=2> ploidy1[N1, L]; /* 2D array of ploidy for parent 1*/	
+	array[N0, L] int<lower=0, upper=2> G0; /* 2D array of G for parent 0 */
+	array[N1, L] int<lower=0, upper=2> G1; /* 2D array of G for parent 1 */
+	array[N0, L] int<lower=0, upper=2> ploidy0; /* 2D array of ploidy for parent 0 */
+	array[N1, L] int<lower=0, upper=2> ploidy1; /* 2D array of ploidy for parent 1*/	
 }
 
 parameters{

@@ -12,14 +12,14 @@ data{
 	int L; /* # of loci */
 	int N; /* # of organisms */
 	int J; /* # of populations */	
-	real<lower=0, upper=1> GL0[N, L]; /* 2D array of genlik 0*/
-	real<lower=0, upper=1> GL1[N, L]; /* 2D array of genlik 1*/
-	real<lower=0, upper=1> GL2[N, L]; /* 2D array of genlik 2*/
-	int<lower=0> pids[N]; /* 1D array of pop ids for inds. */
+	array[N, L] real<lower=0, upper=1> GL0; /* 2D array of genlik 0*/
+	array[N, L] real<lower=0, upper=1> GL1; /* 2D array of genlik 1*/
+	array[N, L] real<lower=0, upper=1> GL2; /* 2D array of genlik 2*/
+	array[N] int<lower=0> pids; /* 1D array of pop ids for inds. */
 }
 
 parameters{
-	real<lower=0, upper=1> P[J,L]; /* 2D array of allele frequencies */
+	array[J, L] real<lower=0, upper=1> P; /* 2D array of allele frequencies */
 }
 
 model{

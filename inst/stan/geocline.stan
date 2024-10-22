@@ -2,8 +2,8 @@
 data{
 	int L; /* # of loci */
 	int J; /* # of populations */
-	real geo[J]; /* 1D array of geographic locations */
-	real Y[J, L]; /* 2D array of logit population allele frequencies */	
+	array[J] real geo; /* 1D array of geographic locations */
+	array[J, L] real Y; /* 2D array of logit population allele frequencies */	
 	real lb; /* lower bound of logit p to include */
 	real ub; /* lower bound of logit p to include */
 	real ga; /* alpha parameter for gamma priors */

@@ -14,7 +14,7 @@ functions {
 data{
 	int L; /* # of loci */
 	int N; /* # of organisms */
-	int<lower=0, upper=2> Z[N, L]; /* 2D array of ancestry */
+	array[N, L] int<lower=0, upper=2> Z; /* 2D array of ancestry */
 }
 
 parameters{

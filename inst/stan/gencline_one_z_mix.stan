@@ -31,8 +31,8 @@ functions {
 data{
 	int L; /* # of loci */
 	int N; /* # of organisms */
-	real<lower=0, upper=2> Z[N]; /* 1D array of ancestry*/
-	real<lower=0, upper=2> ploidy[N]; /* 1D array of ploidy */
+	array[N] real<lower=0, upper=2> Z; /* 1D array of ancestry*/
+	array[N] real<lower=0, upper=2> ploidy; /* 1D array of ploidy */
 	vector<lower=0, upper=1>[N] H; /* vector of hybrid indexes */
 	real<lower=0> sc; /* sigma for center*/
 	real<lower=0> sv; /* sigma for v*/

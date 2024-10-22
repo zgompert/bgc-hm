@@ -14,11 +14,11 @@ functions {
 data{
 	int L; /* # of loci */
 	int N; /* # of organisms */
-	int<lower=0, upper=2> Z[N, L]; /* 2D array of ancestry */
+	array[N, L] int<lower=0, upper=2> Z; /* 2D array of ancestry */
 }
 
 parameters{
-	simplex[3] Q[N]; /* array of simplexes for ancestry components */
+	array[N] simplex[3] Q; /* array of simplexes for ancestry components */
 }
 
 model{

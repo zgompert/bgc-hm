@@ -22,7 +22,7 @@ functions {
 data{
 	int L; /* # of loci */
 	int N; /* # of organisms */
-	real<lower=0, upper=2> G[N]; /* 1D array of G*/
+	array[N] real<lower=0, upper=2> G; /* 1D array of G*/
 	vector<lower=0, upper=1>[N] H; /* vector of hybrid indexes */
 	real<lower=0, upper=1> P0; /* parent 0 allele frequencies */
 	real<lower=0, upper=1> P1; /* parent 1 allele frequencies */

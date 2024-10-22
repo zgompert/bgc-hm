@@ -19,9 +19,9 @@ functions {
 data{
 	int L; /* # of loci */
 	int N; /* # of organisms */
-	real<lower=0, upper=2> GL0[N]; /* 1D array of genlik 0*/
-	real<lower=0, upper=2> GL1[N]; /* 1D array of genlik 1*/
-	real<lower=0, upper=2> GL2[N]; /* 1D array of genlik 2*/	
+	array[N] real<lower=0, upper=2> GL0; /* 1D array of genlik 0*/
+	array[N] real<lower=0, upper=2> GL1; /* 1D array of genlik 1*/
+	array[N] real<lower=0, upper=2> GL2; /* 1D array of genlik 2*/	
 	vector<lower=0, upper=1>[N] H; /* vector of hybrid indexes */
 	real<lower=0, upper=1> P0; /* parent 0 allele frequencies */
 	real<lower=0, upper=1> P1; /* parent 1 allele frequencies */

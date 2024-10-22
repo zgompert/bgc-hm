@@ -18,10 +18,10 @@ functions {
 data{
 	int L; /* # of loci */
 	int N; /* # of organisms */
-	real<lower=0, upper=2> GL0[N, L]; /* 2D array of genlik 0*/
-	real<lower=0, upper=2> GL1[N, L]; /* 2D array of genlik 1*/
-	real<lower=0, upper=2> GL2[N, L]; /* 2D array of genlik 2*/
-	real<lower=0, upper=2> ploidy[N, L]; /* 2D array of ploidy */
+	array[N, L] real<lower=0, upper=2> GL0; /* 2D array of genlik 0*/
+	array[N, L] real<lower=0, upper=2> GL1; /* 2D array of genlik 1*/
+	array[N, L] real<lower=0, upper=2> GL2; /* 2D array of genlik 2*/
+	array[N, L] real<lower=0, upper=2> ploidy; /* 2D array of ploidy */
 	vector<lower=0, upper=1>[L] P0; /* parent 0 allele frequencies */
 	vector<lower=0, upper=1>[L] P1; /* parent 1 allele frequencies */
 }

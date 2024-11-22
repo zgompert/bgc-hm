@@ -117,12 +117,12 @@ est_p<-function(G0=NULL,G1=NULL,model="genotype",ploidy="diploid",pldat=NULL,
 		pldat[[2]]<-as.matrix(pldat[[2]])
 		pldat[[3]]<-as.matrix(pldat[[3]])
 		## solve for posterior
-		y<-apply(G0,2,sum)
+		y<-apply(G0,2,sum,na.rm=TRUE)
 		n<-apply(pldat[[2]],2,sum)
 		a<-y+a0
 		b<-n-y+b0
 		p0<-mqbeta(c(.5,.025,.05,.95,.975),shape1=a,shape2=b)
-		y<-apply(G1,2,sum)
+		y<-apply(G1,2,sum,na.rm=TRUE)
 		n<-apply(pldat[[3]],2,sum)
 		a<-y+a0
 		b<-n-y+b0
@@ -153,12 +153,12 @@ est_p<-function(G0=NULL,G1=NULL,model="genotype",ploidy="diploid",pldat=NULL,
 			}
 		} else { ## use analytical
 			## solve for posterior
-			y<-apply(G0[[2]]+G0[[3]]*2,2,sum)
+			y<-apply(G0[[2]]+G0[[3]]*2,2,sum,na.rm=TRUE)
 			n<-apply(pldat[[2]],2,sum)
 			a<-y+a0
 			b<-n-y+b0
 			p0<-mqbeta(c(.5,.025,.05,.95,.975),shape1=a,shape2=b)
-			y<-apply(G1[[2]]+G1[[3]]*2,2,sum)
+			y<-apply(G1[[2]]+G1[[3]]*2,2,sum,na.rm=TRUE)
 			n<-n<-apply(pldat[[3]],2,sum)
 			a<-y+a0
 			b<-n-y+b0

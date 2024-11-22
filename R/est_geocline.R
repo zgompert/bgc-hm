@@ -89,7 +89,7 @@ est_geocl<-function(G=NULL,P=NULL,Geo=NULL,Ids=NULL,model="genotype",ploidy="dip
 		} else if(model=="genotype" & ploidy=="mixed"){
 			P<-matrix(NA,nrow=length(Geo),ncol=dim(G)[2])
 			for(i in 1:dim(G)[2]){
-				Y<-tapply(X=G[,i],INDEX=Ids,sum)
+				Y<-tapply(X=G[,i],INDEX=Ids,sum,na.rm=TRUE)
 				N<-tapply(X=pldat[,i],INDEX=Ids,sum)
 				# posterior median
 				P[,i]<-qbeta(0.5,Y+0.5,N-Y+0.5)
@@ -105,7 +105,7 @@ est_geocl<-function(G=NULL,P=NULL,Geo=NULL,Ids=NULL,model="genotype",ploidy="dip
 		} else { ## glik and mixed
 			P<-matrix(NA,nrow=length(Geo),ncol=dim(G)[2])
 			for(i in 1:dim(G)[2]){
-				Y<-tapply(X=G[[2]][,i]+G[[3]][,i]*2,INDEX=Ids,sum)
+				Y<-tapply(X=G[[2]][,i]+G[[3]][,i]*2,INDEX=Ids,sum,na.rm=TRUE)
 				N<-tapply(X=pldat[,i],INDEX=Ids,sum)
 				# posterior median
 				P[,i]<-qbeta(0.5,Y+0.5,N-Y+0.5)

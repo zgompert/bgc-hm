@@ -6,7 +6,7 @@
 #' @param G1 genetic data for parental reference set 1 formatted as described for Gx.
 #' @param p0 vector of allele frequencies for parental reference set 0 (one entry per locus).
 #' @param p1 vector allele frequencies for parental reference set 1 (one entry per locus).
-#' @param H vector of hybrid indexes for the putative hybrids (one entry per locus).
+#' @param H vector of hybrid indexes for the putative hybrids (one entry per individual).
 #' @param model for genetic data, either 'genotype' for known gentoypes, 'glik' for genotype likelihoods, or 'ancestry' for known ancestry.
 #' @param ploidy species ploidy, either all 'diploid' or 'mixed' for diploid and haploid loci or individuals.
 #' @param pldat matrix or list of matrixes with ploidy data for mixed ploidy (rows = individuals, columns = loci) indicating ploidy (2 = diploid, 1 = haploid).

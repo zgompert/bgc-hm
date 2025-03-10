@@ -54,11 +54,11 @@ est_p<-function(G0=NULL,G1=NULL,model="genotype",ploidy="diploid",pldat=NULL,
 	b0<-.5
 
 	mqbeta<-function(p=NA,shape1=NA,shape2=NA){
-		o<-cbind(qbeta(p[1],shape1=a,shape2=b),
-		      qbeta(p[2],shape1=a,shape2=b),
-		      qbeta(p[3],shape1=a,shape2=b),
-		      qbeta(p[4],shape1=a,shape2=b),
-		      qbeta(p[5],shape1=a,shape2=b))
+		o<-cbind(qbeta(p[1],shape1=shape1,shape2=shape2),
+		      qbeta(p[2],shape1=shape1,shape2=shape2),
+		      qbeta(p[3],shape1=shape1,shape2=shape2),
+		      qbeta(p[4],shape1=shape1,shape2=shape2),
+		      qbeta(p[5],shape1=shape1,shape2=shape2))
 		colnames(o)<- paste(p*100,"%",sep="")
 		return(o)
 	}
@@ -67,13 +67,13 @@ est_p<-function(G0=NULL,G1=NULL,model="genotype",ploidy="diploid",pldat=NULL,
 		G0<-as.matrix(G0)
 		G1<-as.matrix(G1)
 		## solve for posterior
-		y<-apply(G0,2,sum)
-		n<-rep(dim(G0)[1] *2, dim(G0)[2])
+		y<-apply(G0,2,sum,na.rm=TRUE)
+		n<-apply(is.na(G0)==FALSE, 2, sum,na.rm=TRUE) * 2
 		a<-y+a0
 		b<-n-y+b0
 		p0<-mqbeta(c(.5,.025,.05,.95,.975),shape1=a,shape2=b)
-		y<-apply(G1,2,sum)
-		n<-rep(dim(G1)[1] *2, dim(G1)[2])
+		y<-apply(G1,2,sum,na.rm=TRUE)
+		n<-apply(is.na(G1)==FALSE, 2, sum,na.rm=TRUE) * 2
 		a<-y+a0
 		b<-n-y+b0
 		p1<-mqbeta(c(.5,.025,.05,.95,.975),shape1=a,shape2=b)

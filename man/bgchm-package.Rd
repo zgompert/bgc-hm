@@ -12,3 +12,7 @@ This is an R package for Bayesian analyses of population genomic data from hybri
 Gompert Z, DeRaad D, Buerkle CA. A next generation of hierarchical Bayesian analyses of hybrid zones enables model-based quantification of variation in introgression in R. bioRxiv 2024.03.29.587395.
 Stan Development Team (2022). RStan: the R interface to Stan. R package version 2.21.7. https://mc-stan.org
 }
+\author{
+\strong{Maintainer}: Zachariah Gompert \email{zach.gompert@usu.edu} (\href{https://orcid.org/0000-0003-2248-2488}{ORCID})
+
+}

@@ -1,6 +1,6 @@
 Package: bgchm
 Title: Bayesian Analyses of Hybrid Zones with Hamiltonian Monte Carlo 
-Version: 0.0.0.9000
+Version: 0.0.0.9100
 Authors@R: 
     person("Zachariah", "Gompert", ,"zach.gompert@usu.edu", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-2248-2488"))

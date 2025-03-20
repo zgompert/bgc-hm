@@ -39,7 +39,7 @@ est_genocl(
 
 \item{p1}{vector allele frequencies for parental reference set 1 (one entry per locus).}
 
-\item{H}{vector of hybrid indexes for the putative hybrids (one entry per locus).}
+\item{H}{vector of hybrid indexes for the putative hybrids (one entry per individual).}
 
 \item{model}{for genetic data, either 'genotype' for known gentoypes, 'glik' for genotype likelihoods, or 'ancestry' for known ancestry.}
 

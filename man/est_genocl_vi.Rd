@@ -2,7 +2,7 @@
 % Please edit documentation in R/est_gencline_vi.R
 \name{est_genocl_vi}
 \alias{est_genocl_vi}
-\title{Estimate genomic clines using Stan's variational algorithm for approximate posterior sampling}
+\title{Estimate genomic clines using a variational algorithm for approximate posterior sampling}
 \usage{
 est_genocl_vi(
   Gx = NULL,
@@ -11,8 +11,16 @@ est_genocl_vi(
   p0 = NULL,
   p1 = NULL,
   H = NULL,
-  SDc = 100,
-  SDv = 100
+  model = "genotype",
+  ploidy = "diploid",
+  pldat = NULL,
+  hier = TRUE,
+  SDc = NULL,
+  SDv = NULL,
+  estMu = FALSE,
+  sd0 = 1,
+  mu0 = 1,
+  method = "meanfield"
 )
 }
 \arguments{
@@ -28,21 +36,65 @@ est_genocl_vi(
 
 \item{H}{vector of hybrid indexes for the putative hybrids (one entry per individual).}
 
+\item{model}{for genetic data, either 'genotype' for known gentoypes, 'glik' for genotype likelihoods, or 'ancestry' for known ancestry.}
+
+\item{ploidy}{species ploidy, either all 'diploid' or 'mixed' for diploid and haploid loci or individuals.}
+
+\item{pldat}{matrix or list of matrixes with ploidy data for mixed ploidy (rows = individuals, columns = loci) indicating ploidy (2 = diploid, 1 = haploid).}
+
+\item{hier}{Boolean, fit hierarchical model (TRUE) that estimates cline SDs or non-hierarchical model that assumes cline SDs are known (FALSE).}
+
 \item{SDc}{known cline center SD on logit scale.}
 
 \item{SDv}{known cline gradient SD on log10 scale.}
+
+\item{estMu}{boolean, estimate genomic cline means (TRUE) or assume a prior mean of 0 (FALSE, the default).}
+
+\item{sd0}{standard deviation for the normal prior on the cline standard deviations, default is 1.}
+
+\item{mu0}{standard deviation for the normal prior on the cline mean, default is 1.}
+
+\item{method}{variational inference algorithm to use, either 'meanfield’ or 'fullrank’, default is meanfiled; fullrank deals better with covariances among parameters in the (approximate and transformed) posterior distribution}
 }
 \value{
-A list of parameter estimates, specifically the cline parameters (center and gradient). Parameter estimates are provided as a point estimate (median of the posterior) and 90\% equal-tail probability intervals (5th and 95th quantiles of the posterior distribution). These are provided as a vector or matrix depending on the dimensionality of the parameter.
+A list of parameter estimates, this includes cline parameters (center and gradient), and, for hierarchical models, standard deviations describing variability in clines across loci (SDc and SDv). Mean values for cline center (Muc) and slope (Muv) are also provided if estMu is set to TRUE. Parameter estimates are provided as a point estimate (median of the posterior) and 90\% equal-tail probability intervals (5th and 95th quantiles of the posterior distribution). These are provided as a vector or matrix depending on the dimensionality of the parameter.
 }
 \description{
-Estimates genomic clines from genetic data using Stan's variational algorithm for approximate posterior sampling. This is currently an experimental feature that should be used with caution. At present, this function only works with diploids and known genotypes and standard deviation parameters (e.g., pre-estimated from the hierarchical model with HMC).
+Estimates genomic clines from genetic data using Stan's variational algorithm for approximate posterior sampling. This is thus an approximation to the full Bayesian analysis with HMC. This is an experimental feature and might not perform well in all cases. It is probably most useful for processing large numbers of loci after estimating cline SD parameters from a subset of loci. It will generally be much faster than HMC.
 }
 \details{
-At present, this function only fits clines based on known genotypes and diploid loci (I will introduce additional options after further testing). Genotypes should be encoded as 0 (homozygote), 1 (heterozygote) and 2 (alternative homozygote). No specific polarization (e.g., minor allele, reference allele, etc.) of 0 vs 2 is required. Hybrid indexes must be provided. Genetic  data for putative hybrids are also always required. Users must either provide pre-estimated parental allele frequencies or parent genotypes that can be used to infer allele frequencies with est_p. Cline SD parameters must be proived. This can be SD parameters estimated from an initital hierarchical model with HMC or large (weakly informative) values if one does not want to approximate a hierarchical model.
+Clines can be inferred based on known genotypes (model = 'genotype'), genotype likelihoods, (model = 'glik') or known (estimated) ancestry (model = 'ancestry'). Genotypes should be encoded as 0 (homozygote), 1 (heterozygote) and 2 (alternative homozygote). No specific polarization (e.g., minor allele, reference allele, etc.) of 0 vs 2 is required. For haploid loci, use 0 and 1. Genotype likelihoods should be on their natural scale (not on the phred scaled) and the values for each locus for an individual should sum to 1 (i.e., the likelihoods are scaled to be probabilities). The data should be provided as a list of three matrixes, with the matrixes giving the likelihoods for genotypes 0, 1 and 2 respectively. Thus, each matrix will have one row per individual and one column per locus. For haploid loci with genotype likelihoods, you must use the 0 and 1 matrixes to store the likelihoods of the two possible states. For the ancestry model, clines are inferred directly from known local (locus-specific) ancestry rather than from genotype data. Users are free to use whatever software they prefer for local ancestry inference (many exist). In this case, each entry in the individual (rows) by locus (columns) matrix should denote the number of gene copies inherited from parental population 1 (where pure parent 1 corresponds with a hybrid index of 1 and pure parent 0 corresponds with a hybrid index of 0). Haploids can be encoded using 0 and 1. For all models, missing data can be encoded by setting the ploidy for an individual/locus to 0 (this indicates no information, whereas genotype likelihoods encode uncertainty in genotypes) and the genotype to NA.
+
+Hybrid indexes must be provided. Genetic (or ancestry) data for putative hybrids are also always required. For genotype or genotype likelihood models, users must either provide pre-estimated parental allele frequencies or parent genetic (genotypes or genotype likelihoods) that can be used to infer allele frequencies with est_p. Parental data are not required for the ancestry model.
+
+Ploidy data are only required for the mixed ploidy data. In this case, there should be one matrix for the hybrids or a list of matrixes for the hybrids (1st matrix) and each parent (2nd and 3rd matrixes, with parent 0 first). The latter is required for the genotype or genotype likelihood models if parental allele frequencies are not provided. The matrixes indicate whether each locus (column) for each individual (row) is diploid (2) or haploid (1) (use 0 for missing data).
+}
+\examples{
+\dontrun{
+## load the data set
+data(genotypes)
+## this includes three objects, GenHybrids, GenP0, and GenP1
+
+## estimate parental allele frequencies
+p_out<-est_p(G0=GenP0,G1=GenP1,model="genotype",ploidy="diploid")
+
+## estimate hybrid indexes, uses default HMC settings
+## and uses point estimates (posterior medians) of allele frequencies
+h_out<-est_hi(Gx=GenHybrids,p0=p_out$p0[,1],p1=p_out$p1[,1],model="genotype",ploidy="diploid")
+
+## fit a genomic cline models with variational inference for each of 51 loci
+## using the estimated hybrid indexes and parental allele frequencies (point estimates) 
+## and assumed, pre-estimated cline SDs of 1.5 (for this example)
+gc_out<-vector("list",51) 
+for(i in 1:51){
+gc_out[[i]]<-est_genocl_vi(Gx=GenHybrids[,i],p0=p_out$p0[i,1],p1=p_out$p1[i,1],H=h_out$hi[,1],model="genotype",ploidy="diploid",hier=FALSE,SDc=1.5,SDv=1.5)
+}
+}
 }
 \references{
-Gompert Z, DeRaad D, Buerkle CA. A next generation of hierarchical Bayesian analyses of hybrid zones enables model-based quantification of variation in introgression in R. bioRxiv 2024.03.29.587395.
+Gompert Z, DeRaad D, Buerkle CA. 2024. A next generation of hierarchical Bayesian analyses of hybrid zones enables model-based quantification of variation in introgression in R. Ecology and Evolution, 14:e70584.
+
+Kucukelbir A, Tran D, Ranganath R, Gelman A, Blei DM. 2017. Automatic differentiation variational inference. Journal of Machine Learning Research, 18:1-45.
 }
 \seealso{
 'rstan::vb' for details on variational inference with stan.

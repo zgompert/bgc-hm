@@ -24,12 +24,12 @@
 #' @details
 #' Ploidy data are only required for the mixed ploidy data. In this case, there should be one matrix for the hybrids or a list of matrixes for the hybrids (1st matrix) and each parent (2nd and 3rd matrixes, with parent 0 first). The latter is required for the genotype or genotype likelihood models if parental allele frequencies are not provided. The matrixes indicate whether each locus (column) for each individual (row) is diploid (2) or haploid (1) (use 0 for missing data).
 #'
-#' @return A list of parameter estimates and full HMC results from stan, this includes cline parameters (center and gradient), and, for hierarchical models, standard deviations describing variability in clines across loci (SDc and SDv). Parameter estimates are provided as a point estimate (median of the posterior), 90% equal-tail probability intervals (5th and 95th quantiles of the posterior distribution), and 95% equal-tail probability intervals (2.5th and 97.5th quantiles of the posterior distribution). These are provided as a vector or matrix depending on the dimensionality of the parameter. The full HMC output from rstan is provided as the final element in the list. This can be used for HMC diagnostics and to extract other model outputs not provided by default. 
+#' @return A list of parameter estimates (hi = hybrid indexes) and full HMC results from stan. Parameter estimates are provided as a point estimate (median of the posterior), 90% equal-tail probability intervals (5th and 95th quantiles of the posterior distribution), 95% equal-tail probability intervals (2.5th and 97.5th quantiles of the posterior distribution). These are provided as a vector or matrix depending on the dimensionality of the parameter. The full HMC output from rstan is provided as the final element in the list. This can be used for HMC diagnostics and to extract other model outputs not provided by default.
 #'
 #' @seealso 'rstan::stan' for details on HMC with stan and the rstan HMC output object.
 #'
 #' @references
-#' Gompert Z, DeRaad D, Buerkle CA. A next generation of hierarchical Bayesian analyses of hybrid zones enables model-based quantification of variation in introgression in R. bioRxiv 2024.03.29.587395.
+#' Gompert Z, DeRaad D, Buerkle CA. 2024. A next generation of hierarchical Bayesian analyses of hybrid zones enables model-based quantification of variation in introgression in R. Ecology and Evolution, 14:e70584.
 #' @export
 #' @examples
 #'\dontrun{

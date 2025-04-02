@@ -2,10 +2,12 @@
 
 export(calc_pp)
 export(est_Q)
+export(est_Q_vi)
 export(est_genocl)
 export(est_genocl_vi)
 export(est_geocl)
 export(est_hi)
+export(est_hi_vi)
 export(est_p)
 export(gencline_plot)
 export(pp_plot)

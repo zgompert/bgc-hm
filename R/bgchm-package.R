@@ -11,7 +11,7 @@
 #' @importFrom rstan sampling
 #'
 #' @references
-#' Gompert Z, DeRaad D, Buerkle CA. A next generation of hierarchical Bayesian analyses of hybrid zones enables model-based quantification of variation in introgression in R. bioRxiv 2024.03.29.587395.
+#' Gompert Z, DeRaad D, Buerkle CA. 2024. A next generation of hierarchical Bayesian analyses of hybrid zones enables model-based quantification of variation in introgression in R. Ecology and Evolution, 14:e70584.
 #' Stan Development Team (2022). RStan: the R interface to Stan. R package version 2.21.7. https://mc-stan.org
 #'
 NULL

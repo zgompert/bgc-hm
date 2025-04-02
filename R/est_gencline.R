@@ -35,7 +35,7 @@
 #' @seealso 'rstan::stan' for details on HMC with stan and the rstan HMC output object.
 #'
 #' @references
-#' Gompert Z, DeRaad D, Buerkle CA. A next generation of hierarchical Bayesian analyses of hybrid zones enables model-based quantification of variation in introgression in R. bioRxiv 2024.03.29.587395.
+#' Gompert Z, DeRaad D, Buerkle CA. 2024. A next generation of hierarchical Bayesian analyses of hybrid zones enables model-based quantification of variation in introgression in R. Ecology and Evolution, 14:e70584.
 #' @export
 #' @examples
 #'\dontrun{
@@ -113,7 +113,7 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 	
 	## fit appropriate genomic cline model based on options
 	if(hier==TRUE & model=="genotype" & ploidy=="diploid" & estMu==FALSE){
-	## hierachical model, known genotypes, diploids
+	## hierarchical model, known genotypes, diploids
 		## generate initial values of cline parameters
 		initf<-function(L=dim(Gx)[2],chain_id=1){
         		list(center=runif(L,.3,.7),v=runif(L,.9,1.1),alpha=chain_id)
@@ -137,7 +137,7 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 			Cout<-list(center=cc,gradient=cv,SDc=sdc,SDv=sdv)
 		}
 	} else if(hier==TRUE & model=="genotype" & ploidy=="diploid" & estMu==TRUE){
-	## hierachical model, known genotypes, diploids, estimate means
+	## hierarchical model, known genotypes, diploids, estimate means
 		## generate initial values of cline parameters
 		initf<-function(L=dim(Gx)[2],chain_id=1){
         		list(center=runif(L,.3,.7),v=runif(L,.9,1.1),alpha=chain_id)
@@ -197,7 +197,7 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 			Cout<-list(center=cc,gradient=cv)
 		}
 	} else if(hier==TRUE & model=="glik" & ploidy=="diploid" & estMu==FALSE){
-	## hierachical model, genotype likelihoods, diploids
+	## hierarchical model, genotype likelihoods, diploids
 		## generate initial values of cline parameters
 		initf<-function(L=dim(Gx[[1]])[2],chain_id=1){
         		list(center=runif(L,.3,.7),v=runif(L,.9,1.1),alpha=chain_id)
@@ -221,7 +221,7 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 			Cout<-list(center=cc,gradient=cv,SDc=sdc,SDv=sdv)
 		}
 	} else if(hier==TRUE & model=="glik" & ploidy=="diploid" & estMu==TRUE){
-	## hierachical model, genotype likelihoods, diploids, estimate means
+	## hierarchical model, genotype likelihoods, diploids, estimate means
 		## generate initial values of cline parameters
 		initf<-function(L=dim(Gx[[1]])[2],chain_id=1){
         		list(center=runif(L,.3,.7),v=runif(L,.9,1.1),alpha=chain_id)
@@ -282,7 +282,7 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 			Cout<-list(center=cc,gradient=cv)
 		}
 	} else if(hier==TRUE & model=="ancestry" & ploidy=="diploid" & estMu==FALSE){
-	## hierachical model, ancestry, diploids
+	## hierarchical model, ancestry, diploids
 		## generate initial values of cline parameters
 		initf<-function(L=dim(Gx)[2],chain_id=1){
         		list(center=runif(L,.3,.7),v=runif(L,.9,1.1),alpha=chain_id)
@@ -305,7 +305,7 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 			Cout<-list(center=cc,gradient=cv,SDc=sdc,SDv=sdv)
 		}
 	} else if(hier==TRUE & model=="ancestry" & ploidy=="diploid" & estMu==TRUE){
-	## hierachical model, ancestry, diploids, estimate means
+	## hierarchical model, ancestry, diploids, estimate means
 		## generate initial values of cline parameters
 		initf<-function(L=dim(Gx)[2],chain_id=1){
         		list(center=runif(L,.3,.7),v=runif(L,.9,1.1),alpha=chain_id)
@@ -365,7 +365,7 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 		}
 
 	} else if(hier==TRUE & model=="genotype" & ploidy=="mixed" & estMu==FALSE){
-	## hierachical model, known genotypes, mixed ploidy
+	## hierarchical model, known genotypes, mixed ploidy
 		## generate initial values of cline parameters
 		initf<-function(L=dim(Gx)[2],chain_id=1){
         		list(center=runif(L,.3,.7),v=runif(L,.9,1.1),alpha=chain_id)
@@ -389,7 +389,7 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 			Cout<-list(center=cc,gradient=cv,SDc=sdc,SDv=sdv)
 		}
 	} else if(hier==TRUE & model=="genotype" & ploidy=="mixed" & estMu==TRUE){
-	## hierachical model, known genotypes, mixed ploidy, estimate means
+	## hierarchical model, known genotypes, mixed ploidy, estimate means
 		## generate initial values of cline parameters
 		initf<-function(L=dim(Gx)[2],chain_id=1){
         		list(center=runif(L,.3,.7),v=runif(L,.9,1.1),alpha=chain_id)
@@ -449,7 +449,7 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 			Cout<-list(center=cc,gradient=cv)
 		}
 	} else if(hier==TRUE & model=="glik" & ploidy=="mixed" & estMu==FALSE){
-	## hierachical model, genotype likelihoods, mixed ploidy
+	## hierarchical model, genotype likelihoods, mixed ploidy
 		## generate initial values of cline parameters
 		initf<-function(L=dim(Gx)[2],chain_id=1){
         		list(center=runif(L,.3,.7),v=runif(L,.9,1.1),alpha=chain_id)
@@ -473,7 +473,7 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 			Cout<-list(center=cc,gradient=cv,SDc=sdc,SDv=sdv)
 		}
 	} else if(hier==TRUE & model=="glik" & ploidy=="mixed" & estMu==TRUE){
-	## hierachical model, genotype likelihoods, mixed ploidy, estimate means
+	## hierarchical model, genotype likelihoods, mixed ploidy, estimate means
 		## generate initial values of cline parameters
 		initf<-function(L=dim(Gx)[2],chain_id=1){
         		list(center=runif(L,.3,.7),v=runif(L,.9,1.1),alpha=chain_id)
@@ -534,7 +534,7 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 			Cout<-list(center=cc,gradient=cv)
 		}
 	}  else if(hier==TRUE & model=="ancestry" & ploidy=="mixed" & estMu==FALSE){
-	## hierachical model, ancestry, mixed ancestry
+	## hierarchical model, ancestry, mixed ancestry
 		## generate initial values of cline parameters
 		initf<-function(L=dim(Gx)[2],chain_id=1){
         		list(center=runif(L,.3,.7),v=runif(L,.9,1.1),alpha=chain_id)
@@ -557,7 +557,7 @@ est_genocl<-function(Gx=NULL,G0=NULL,G1=NULL,p0=NULL,p1=NULL,H=NULL,model="genot
 			Cout<-list(center=cc,gradient=cv,SDc=sdc,SDv=sdv)
 		}
 	}  else if(hier==TRUE & model=="ancestry" & ploidy=="mixed" & estMu==TRUE){
-	## hierachical model, ancestry, mixed ancestry, estimate means
+	## hierarchical model, ancestry, mixed ancestry, estimate means
 		## generate initial values of cline parameters
 		initf<-function(L=dim(Gx)[2],chain_id=1){
         		list(center=runif(L,.3,.7),v=runif(L,.9,1.1),alpha=chain_id)

@@ -106,7 +106,7 @@ lines(geo,o$cent[i,1] + o$slope[i,1] * geo)
 }
 }
 \references{
-Gompert Z, DeRaad D, Buerkle CA. A next generation of hierarchical Bayesian analyses of hybrid zones enables model-based quantification of variation in introgression in R. bioRxiv 2024.03.29.587395.
+Gompert Z, DeRaad D, Buerkle CA. 2024. A next generation of hierarchical Bayesian analyses of hybrid zones enables model-based quantification of variation in introgression in R. Ecology and Evolution, 14:e70584.
 }
 \seealso{
 'rstan::stan' for details on HMC with stan and the rstan HMC output object.

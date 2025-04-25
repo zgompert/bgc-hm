@@ -19,7 +19,7 @@ gencline_plot<-function (center=NULL, v=NULL, pdf=TRUE, outf="cline_plot.pdf", c
     if (is.null(center) == TRUE | is.null(v) == TRUE) 
         stop("error, input data are not provided")
     if (pdf == TRUE) 
-        pdf(file = paste(out.file))
+        pdf(file = paste(outf))
 
     ## create vector for hybrid indexes
     h<-seq(0,1,0.01)
